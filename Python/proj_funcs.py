@@ -69,8 +69,14 @@ def bin_it(dict, histogram=True, type=False, type_dict=False):
 def draw_network_plt(graph, name=False):
 	"""Will create a networkx matplotlib graph.
 	Options: If name is specified, will save with name, otherwise will show plot"""
-	colors = nx.get_node_attributes(graph, 'color').values()			#Attributes for visualizing
-	nx.draw(graph, with_labels=False, node_color=colors, node_size=50)
+	colors = False
+	sizes = False
+	if 'color' in graph.nodes(data=True)[0][1].keys():
+		colors = nx.get_node_attributes(graph, 'color').values()
+	if 'weight' in graph.nodes(data=True)[0][1].keys():
+		sizes = nx.get_node_attributes(graph, 'weight').values()*100
+	
+	nx.draw(graph, node_size=sizes)
 	if not name:
 		plt.show()
 	else:
@@ -84,8 +90,6 @@ def write_network_gml(graph, name):
 	nx.write_gml(graph, '../Gephi/'+str(name)+'.gml')
 	print "done"
 
-#http://stackoverflow.com/questions/3463930/how-to-round-the-
-#minute-of-a-datetime-object-python/10854034#10854034
 def roundTime(dt=None, roundTo=60):
    """Round a datetime object to any time laps in seconds
    dt : datetime.datetime object, default now.
@@ -120,4 +124,20 @@ def get_avg(list):
 		avg+=i
 	return avg/len(list)
 
-
+def reciprocity_by_degree(graph, degree_type='in', size=20):
+	"""Returns reciprocity (specified by in/out degree )
+		**Need to compare to reciprocity formula in Networks Text.
+		Formatted for LaTeX table output."""
+	if degree_type is 'in':
+		degrees = graph.in_degree()
+	if degree_type is 'out':
+		degrees = graph.out_degree()
+	avg_reciprocity = 0.0
+	for w in sorted(degrees, key=degrees.get, reverse=True)[0:size]:
+		print degrees[w], "&",
+		query = {'spec': {'user.id': int(w) }, 'fields':{'_id':0, 'user.screen_name': 1, 'text':1} }
+		this_data = bf.query_mongo_get_list(query, limit=1)
+		reciprocity = f.get_reciprocity_of_node(umg, int(w))
+		print this_data['user']['screen_name'], "\\\\"#,"&", "{0:.4f}".format(reciprocity),"\\\\"
+		avg_reciprocity+=reciprocity
+	print avg_reciprocity/size
