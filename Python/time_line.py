@@ -17,40 +17,42 @@ query = {	'spec':	 { },						# We want all tweets
 						'user.id'               : 1, 		# User ID
 						'created_at'			: 1} }		# This is a date, may have to adjust zone.
 
-def get_data_list():
-	tweets = bf.query_mongo_get_list(query)
+def get_data_list(time_step=60*60):
+	'''Returns dictionary:
+		Keys: Time Steps
+		Values: #Tweets in TimeStep'''
+	tweets = bf.query_mongo_get_list(query, limit=200000)
 
 	flood_days = {}
 	
 	for tweet in tweets:
 		tweet['created_at'] -= datetime.timedelta(hours=6) #Adjusting for TimeZone
-		this_hour = f.roundTime(tweet['created_at'],roundTo=60*60)
+		this_hour = f.roundTime(tweet['created_at'],roundTo=time_step)
 		if flood_days.has_key(this_hour):
 			flood_days[this_hour].append(tweet)
 		else:
 			flood_days[this_hour] = [tweet]
 	return flood_days
 
-days = get_data_list()
-
-def make_plot(days):
+def make_plot(time_steps, time_step='Day'):
+	'''Create plot from time_steps dictionary'''
 	to_graph = []
-	sorted_keys = days.keys()
+	sorted_keys = time_steps.keys()
 	sorted_keys.sort()
 
 	#print sorted_keys
 	
 	for key in sorted_keys:
-		to_graph.append(len(days[key]))
+		to_graph.append(len(time_steps[key]))
 
 	#max_index = to_graph.index(max(to_graph))
 	#print sorted_keys[max_index], to_graph[max_index]
 
 	plt.plot(sorted_keys, to_graph)
 	locs, labels = plt.xticks()
-	plt.title('Twitter Activity by Day')
-	plt.ylabel('Tweets per Day')
-	plt.xlabel('Days')
+	plt.title('Twitter Activity by '+str(time_step)) #Modify this to apply
+	plt.ylabel('Tweets per '+str(time_step))		 #Modify this to apply
+	plt.xlabel(str(time_step))
 	plt.setp(labels, rotation=90)
 	plt.show()
 
@@ -59,17 +61,19 @@ def make_plot(days):
 	to_graph.sort()
 	to_graph.reverse()
 
-	top_ten_hours = []
+	top_ten = []
 	for i in to_graph[0:100]:
-		top_ten_hours.append(sorted_keys[to_graph_original.index(i)])
-		print top_ten_hours[len(top_ten_hours)-1], i
+		top_ten.append(sorted_keys[to_graph_original.index(i)])
+		print top_ten[len(top_ten)-1], i
+
+	return top_ten
 
 
-	return top_ten_hours
+if __name__ == '__main__':
+	
+	hours = get_data_list(time_step=60*60)
 
-top_ten_hours = make_plot(days)
-
-print top_ten_hours
+	top_ten = make_plot(hours, 'Hour')
 
 
 

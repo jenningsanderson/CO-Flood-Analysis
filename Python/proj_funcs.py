@@ -66,17 +66,25 @@ def bin_it(dict, histogram=True, type=False, type_dict=False):
 	else:
 		return counts
 
-def draw_network_plt(graph, name=False):
+def draw_network_plt(graph, name=False, scale=100):
 	"""Will create a networkx matplotlib graph.
 	Options: If name is specified, will save with name, otherwise will show plot"""
-	colors = False
-	sizes = False
+	colors	 		= False
+	sizes  			= False
+	scaled_sizes 	= False
 	if 'color' in graph.nodes(data=True)[0][1].keys():
 		colors = nx.get_node_attributes(graph, 'color').values()
 	if 'weight' in graph.nodes(data=True)[0][1].keys():
-		sizes = nx.get_node_attributes(graph, 'weight').values()*100
-	
-	nx.draw(graph, node_size=sizes)
+		sizes = nx.get_node_attributes(graph, 'weight').values()
+		scaled_sizes = [x * scale for x in sizes] 
+	if colors and weight:
+		nx.draw(graph, node_size=scaled_sizes, node_color=colors)
+	elif colors and not weight:
+		nx.draw(graph, node_color=colors)
+	elif scaled_sizes and not colors:
+		nx.draw(graph, node_size=scaled_sizes)
+	else:
+		nx.draw(graph)
 	if not name:
 		plt.show()
 	else:
