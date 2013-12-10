@@ -1,0 +1,20 @@
+# Ignore these directories:
+Images/*
+Gephi/*
+ExternalResearch/*
+Computation/*
+Presentation/*
+Paper/*
+
+# Ignore these file types:
+*.pdf
+*.pickle
+*.pyc
+*.aux
+*.log
+*.DS_Store
+*.txt
+
+#Override ignore to include these files:
+#*.tex		# May add these files in later.
+#*.bbl
