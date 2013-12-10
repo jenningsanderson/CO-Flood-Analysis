@@ -11,7 +11,7 @@ from pymongo import MongoClient
 from datetime import datetime
 
 ###################  MAIN TWEET FILE -- EACH LINE IS A JSON OBJECT     ################
-file = open('/Users/jenningsanderson/Documents/Boulder_Floods/ISCRAM/boulder_floods.json', 'r')
+file = open('../../../../Documents/Boulder_Floods/boulder_floods.json', 'r')
 db = MongoClient().mydb.tweets	#Main Collection
 #######################################################################################
 

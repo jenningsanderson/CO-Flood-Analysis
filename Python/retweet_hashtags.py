@@ -11,8 +11,11 @@ import bf_load as bf
 import proj_funcs as f
 import networkx as nx
 import matplotlib.pyplot as plt
+import re
 
-query = {	'spec':	{'text':{'$regex':'^(RT|MT)'}},#, 'geo': {'$ne': None }},	#Only Geolocated tweets #For now.
+
+
+query = {	'spec':	{'text': re.compile('(RT|MT)', re.IGNORECASE) },#, 'geo': {'$ne': None }},	#Only Geolocated tweets #For now.
 			'fields':{	'_id':0, 'id':1, 'user.screen_name': 1, 'text':1,
 						'user.id':1, 'entities.hashtags':1}
 		}
@@ -51,19 +54,53 @@ def retweeted_graph(tweets_array):
 	print "----DONE----"	
 	return g
 
+def make_triangle_cc_plot(graph, threshold=100, show_labels=False):
+	"""Create a Plot of #Triangles vs. Clustering Coefficient for each node.
+	Options: 
+		Threshold defines maximum # triangles per node to be included in plot.
+		show_labels (defaults to false) tells matplotlib to show labels or not"""
+	tris =  nx.triangles(graph)
+	clustering = nx.clustering(graph)
+	cc_to_graph = []
+	tris_to_graph = []
+	labels = []
+	fig, ax = plt.subplots()
+	print  "{:15s}".format("Node"), "Tris", "CC"
+	for i in tris.keys():
+		if tris[i] < threshold:
+			print "{:15s}".format(i), "{:3d}".format(tris[i]), "{0:.4f}".format(clustering[i])
+			cc_to_graph.append(clustering[i])
+			tris_to_graph.append(tris[i])
+			labels.append(i)
+
+	ax.scatter(cc_to_graph, tris_to_graph)
+	
+	if show_labels:
+		for i, txt in enumerate(labels):
+			ax.annotate(txt, (cc_to_graph[i], tris_to_graph[i]))
+
+	plt.title('Number of Triangles vs. Clustering Coefficient')
+ 	plt.ylabel("Triangles")
+ 	plt.xlabel("Clustering Coefficient")
+	
+	return plt
+
 ############################## RUNTIME #######################################
 if __name__ == '__main__':
 
-	retweets = bf.query_mongo_get_list(query)
+	retweets = bf.query_mongo_get_list(query)		# Get retweets list
 
-	print len(retweets)	
+	print "Number of Retweets: ", len(retweets)		
 
-	retweets_graph = retweeted_graph(retweets)
+	retweets_graph = retweeted_graph(retweets)		# Make graph
 
-	pruned_graph = retweets_graph.copy()
+	pruned_graph = retweets_graph.copy()			# Prune graph to hashtags > 700
 	for node in pruned_graph.nodes():
-		if pruned_graph.node[node]['weight'] < 500:
+		if pruned_graph.node[node]['weight'] < 700:
 			pruned_graph.remove_node(node)
 
-	#f.write_network_gml(pruned_graph, 'retweets_hashtag_gt30_lower')
-	f.draw_network_plt(pruned_graph, scale=(.1))
+	make_triangle_cc_plot(pruned_graph, show_labels=True, threshold=1000).show()
+
+	#f.write_network_gml(pruned_graph, 'retweets_hashtag_gt500')
+
+	#f.draw_network_plt(pruned_graph, scale=(.1))	#For quick visualization
