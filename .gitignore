@@ -5,7 +5,7 @@ ExternalResearch/*
 Computation/*
 Presentation/*
 Paper/*
-
+	
 # Ignore these file types:
 *.pdf
 *.pickle
