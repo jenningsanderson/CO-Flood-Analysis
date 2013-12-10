@@ -68,7 +68,10 @@ def make_triangle_cc_plot(graph, threshold=100, show_labels=False):
 	print  "{:15s}".format("Node"), "Tris", "CC"
 	for i in tris.keys():
 		if tris[i] < threshold:
-			print "{:15s}".format(i), "{:3d}".format(tris[i]), "{0:.4f}".format(clustering[i])
+			print "{:15s}".format(i), "&",
+			print "{:3d}".format(tris[i]), "&",
+			print "{0:.4f}".format(clustering[i]),
+			print "\\\\"
 			cc_to_graph.append(clustering[i])
 			tris_to_graph.append(tris[i])
 			labels.append(i)
