@@ -102,6 +102,7 @@ if __name__ == '__main__':
 		if pruned_graph.node[node]['weight'] < 700:
 			pruned_graph.remove_node(node)
 
+
 	make_triangle_cc_plot(pruned_graph, show_labels=True, threshold=1000).show()
 
 	#f.write_network_gml(pruned_graph, 'retweets_hashtag_gt500')
