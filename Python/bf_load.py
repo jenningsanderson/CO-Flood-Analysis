@@ -61,5 +61,3 @@ def unpickle_this(path):					#Deprecated in final version: too slow
 
 if __name__ == '__main__':					# If this file is called direclty, then run import
 	populate_mongoDB()
-
-	If I make a change here, does it stick?
