@@ -157,6 +157,26 @@ calculations because it is slower than reading from the database.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-time_line">
+<span id="time-analysis-module"></span><h2>Time Analysis Module<a class="headerlink" href="#module-time_line" title="Permalink to this headline">¶</a></h2>
+<p>Jennings Anderson 2013
+CSCI 5352: Final Project: Boulder Flooding</p>
+<p>This module is for visualizing the timeline of the flooding for temporal analysis.</p>
+<dl class="function">
+<dt id="time_line.get_data_list">
+<tt class="descclassname">time_line.</tt><tt class="descname">get_data_list</tt><big>(</big><em>time_step=3600</em><big>)</big><a class="reference internal" href="_modules/time_line.html#get_data_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_line.get_data_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dictionary:
+Keys: Time Steps
+Values: #Tweets in TimeStep</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="time_line.make_plot">
+<tt class="descclassname">time_line.</tt><tt class="descname">make_plot</tt><big>(</big><em>time_steps</em>, <em>time_step='Day'</em><big>)</big><a class="reference internal" href="_modules/time_line.html#make_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_line.make_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create plot from time_steps dictionary</p>
+</dd></dl>
+
+</div>
 <div class="section" id="module-user_mentions">
 <span id="user-mentions-module"></span><h2>User Mentions Module<a class="headerlink" href="#module-user_mentions" title="Permalink to this headline">¶</a></h2>
 <p>Jennings Anderson 2013
@@ -171,6 +191,37 @@ Edges: Exist if user mentions user in tweet, weight = frequency</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-retweet_hashtags">
+<span id="retweeted-hashtags-modules"></span><h2>Retweeted Hashtags Modules<a class="headerlink" href="#module-retweet_hashtags" title="Permalink to this headline">¶</a></h2>
+<p>Jennings Anderson 2013
+CSCI 5352: Final Project: Boulder Flooding</p>
+<p>This module builds hashtag networks based on retweet frequency.
+Hashtags are nodes and edges exist between them if they appear in the same tweet.
+This is similar to a word cloud, but shows relation between tweets.</p>
+<p>The hope is that by identifying clusters, SPAM keywords can be easily identified.</p>
+<dl class="function">
+<dt id="retweet_hashtags.make_triangle_cc_plot">
+<tt class="descclassname">retweet_hashtags.</tt><tt class="descname">make_triangle_cc_plot</tt><big>(</big><em>graph</em>, <em>threshold=100</em>, <em>show_labels=False</em><big>)</big><a class="reference internal" href="_modules/retweet_hashtags.html#make_triangle_cc_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retweet_hashtags.make_triangle_cc_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Plot of #Triangles vs. Clustering Coefficient for each node.
+Options:</p>
+<blockquote>
+<div>Threshold defines maximum # triangles per node to be included in plot.
+show_labels (defaults to false) tells matplotlib to show labels or not</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="retweet_hashtags.retweeted_graph">
+<tt class="descclassname">retweet_hashtags.</tt><tt class="descname">retweeted_graph</tt><big>(</big><em>tweets_array</em><big>)</big><a class="reference internal" href="_modules/retweet_hashtags.html#retweeted_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retweet_hashtags.retweeted_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns graph from tweets array returned from mongoDB</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-follower_assortativity">
+<span id="follower-assortativity-module"></span><h2>Follower Assortativity Module<a class="headerlink" href="#module-follower_assortativity" title="Permalink to this headline">¶</a></h2>
+<p>Jennings Anderson 2013
+CSCI 5352: Final Project: Boulder Flooding</p>
+<p>This module gives follower_assortativity by user_mentions.</p>
+</div>
 </div>
 
 
@@ -184,7 +235,10 @@ Edges: Exist if user mentions user in tweet, weight = frequency</p>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Documentation for Functions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-proj_funcs">General Project Functions Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-bf_load">PyMongo Interfacing Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-time_line">Time Analysis Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-user_mentions">User Mentions Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-retweet_hashtags">Retweeted Hashtags Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-follower_assortativity">Follower Assortativity Module</a></li>
 </ul>
 </li>
 </ul>
