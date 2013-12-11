@@ -37,7 +37,7 @@ end = datetime.datetime(2013, 9, 12, 18, 00, 00)
 # 						'user.id'	:1, 
 # 						'entities.user_mentions':1 }	}
 
-query = {	'spec':	{}, #{'geo': {'$ne': None }},	#Only geolocated tweets?
+query = {	'spec': {'geo': {'$ne': None }},	#Only geolocated tweets?
 			'fields':{	'_id':0, 'id':1, 'user.screen_name': 1, 'text':1,
 						'user.id':1, 'entities.user_mentions':1}
 		}
@@ -93,26 +93,37 @@ if __name__ == '__main__':
 	print 'End:', end
 	
 	user_mentions = bf.query_mongo_get_list(query)
-	print len(user_mentions)
+	print "Tweets:", len(user_mentions)
 	
 	umg = user_mentions_graph(user_mentions)
 
-	#large_component = nx.weakly_connected_component_subgraphs(umg)[0]
-	large_component = umg
+	large_component = nx.weakly_connected_component_subgraphs(umg)[0].to_undirected()
+	print "Nodes in Giant Component: ",len(large_component.nodes())
 
-	sum = 0
-	for node in umg.nodes():
-		if "," in umg.node[node]['label']:
-			print umg.node[node]['label'], node, 
-			query = {	'spec':	{'user.id':node}, #{'geo': {'$ne': None }},	#Only geolocated tweets?
-			'fields':{	'_id':0, 'id':1, 'user.screen_name': 1, 'text':1,
-						'user.id':1, 'entities.user_mentions':1}
-		}
-			result = len(bf.query_mongo_get_list(query))
-			print result
-			sum+=result
 
-	print "these tweets: ", sum
+	#bc = nx.betweenness_centrality(large_component, weight='weight')
+
+	print f.get_graph_reciprocity(large_component)
+	print f.get_graph_reciprocity(large_component, weighted=False)
+
+	f.print_top_reciprocated_nodes(large_component, 10)
+
+
+
+
+	# sum = 0
+	# for node in umg.nodes():
+	# 	if "," in umg.node[node]['label']:
+	# 		print umg.node[node]['label'], node, 
+	# 		query = {	'spec':	{'user.id':node}, #{'geo': {'$ne': None }},	#Only geolocated tweets?
+	# 		'fields':{	'_id':0, 'id':1, 'user.screen_name': 1, 'text':1,
+	# 					'user.id':1, 'entities.user_mentions':1}
+	# 	}
+	# 		result = len(bf.query_mongo_get_list(query))
+	# 		print result
+	# 		sum+=result
+
+	# print "these tweets: ", sum
 
 	#Compute the betweenness centrality of the User-mentions graph (For all the users)
 	#bc = nx.betweenness_centrality(large_component)

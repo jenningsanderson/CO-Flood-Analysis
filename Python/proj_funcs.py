@@ -125,6 +125,33 @@ def get_reciprocity_of_node(graph, node):
 			unreciprocated_links+=1
 	return (reciprocated_links) / (total_degree - reciprocated_links)
 
+def get_graph_reciprocity(graph, weighted=True):
+	"""Compute graph reciprocity: reciprocated links / total links"""
+	edge_list = graph.edges(data=True)
+	total_edges = len(edge_list) #Must account for the weight of the edges as well.
+	reciprocated_links = 0.0
+	new_list = []
+	# for edge in edge_list:
+	if weighted:
+		for edge in edge_list:
+			while edge[2]['weight'] > 0:
+			 	new_list.append( (edge[0],edge[1]) )
+			 	edge[2]['weight']-=1
+		edge_list = new_list
+		total_edges = len(new_list)
+	
+	elif (not weighted and edge_list[0][2] is not None):
+		for edge in edge_list:
+			 new_list.append( (edge[0],edge[1]) )
+		edge_list = new_list
+		total_edges = len(new_list)
+
+	for edge in edge_list:
+		if (edge[1],edge[0]) in edge_list:
+			reciprocated_links+=2
+			edge_list.remove( (edge[1], edge[0]) )
+	return reciprocated_links / total_edges
+
 def get_avg(list):
 	"""Simply returns the average of a list"""
 	avg = 0.0
@@ -148,4 +175,40 @@ def reciprocity_by_degree(graph, degree_type='in', size=20):
 		avg_reciprocity+=reciprocity
 	print avg_reciprocity/size
 
+def print_betweenness_centrality(graph, amount=10):
+	""" Prints the betweenness centrality for the top specificed # of nodes.
+		Uses NetworkX's betweenness_centrality function.
+		Depends on having weighted"""
+	bc = nx.betweenness_centrality(graph, weight='weight')
+	print "Top "+str(amount)+" Nodes by Betweenness Centrality:"
+	for node in sorted(bc, key=bc.get, reverse=True)[0:amount]:
+		print "{:15s}".format(graph.node[node]['label']), 
+		print "{0:4f}".format(bc[node])
+
+def print_top_reciprocated_nodes(graph, count):
+	recips = {}
+	recip_return = {}
+	for node in graph.nodes():
+		recips[node] = get_reciprocity_of_node(graph, node)
+	for w in sorted(recips, key=recips.get, reverse=True)[0:count]:
+		print graph.node[w]['label'], "&","{0:4f}".format(recips[w]), "\\\\"
+	#return recip_return
+
+
+if __name__ == '__main__':
+	test_graph = nx.DiGraph()
+	test_graph.add_edge(0,1,weight=2)
+	test_graph.add_edge(1,2,weight=4)
+	test_graph.add_edge(2,1,weight=4)
+	test_graph.add_edge(2,0,weight=2)
+	test_graph.add_edge(3,2,weight=2)
+	test_graph.add_edge(3,0,weight=2)
+	test_graph.add_edge(0,3,weight=2)
+
+	print get_graph_reciprocity(test_graph)
+
+	print_top_reciprocated_nodes(test_graph, 4)
+
+	#nx.draw(test_graph)
+	#plt.show()
 

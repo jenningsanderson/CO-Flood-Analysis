@@ -54,6 +54,7 @@ def retweeted_graph(tweets_array):
 	degrees = g.degree(weight='weight')
 	for node in degrees.keys():
 		g.node[node]['real_degree']=degrees[node]
+		g.node[node]['label']=node
 	
 	print "----DONE----"
 	return g
@@ -107,9 +108,10 @@ if __name__ == '__main__':
 		if pruned_graph.node[node]['weight'] < 800:
 			pruned_graph.remove_node(node)
 
+	f.print_betweenness_centrality(pruned_graph)
 
-	make_triangle_cc_plot(pruned_graph, show_labels=True, threshold=300).show()
+	#make_triangle_cc_plot(pruned_graph, show_labels=True, threshold=300).show()
 
-	f.write_network_gml(pruned_graph, 'retweets_hashtag_gt800_real_degree')
+	#f.write_network_gml(pruned_graph, 'retweets_hashtag_gt800_real_degree')
 
 	#f.draw_network_plt(pruned_graph, scale=(.1))	#For quick visualization
