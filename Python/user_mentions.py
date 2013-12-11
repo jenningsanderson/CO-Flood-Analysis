@@ -26,21 +26,21 @@ import datetime
 # 2013-09-12 16:00:00 3052
 # 2013-09-12 17:00:00 3039
 
-start = datetime.datetime(2013, 9, 12, 17, 00, 00)
-end = datetime.datetime(2013, 9, 12, 18, 00, 00)
+start = datetime.datetime(2013, 9, 13, 5, 00, 00)
+end = datetime.datetime(2013, 9, 13, 6, 00, 00)
 
-# query = {	'spec':	{'created_at': {'$gt': start, '$lt': end } },
-# 			'fields':{	'_id'		:0, 
-# 						'id'		:1, 
-# 						'user.screen_name': 1, 
-# 						'text'		:1,
-# 						'user.id'	:1, 
-# 						'entities.user_mentions':1 }	}
+query = {	'spec':	{'created_at': {'$gt': start, '$lt': end } },
+			'fields':{	'_id'		:0, 
+						'id'		:1, 
+						'user.screen_name': 1, 
+						'text'		:1,
+						'user.id'	:1, 
+						'entities.user_mentions':1 }	}
 
-query = {	'spec': {'geo': {'$ne': None }},	#Only geolocated tweets?
-			'fields':{	'_id':0, 'id':1, 'user.screen_name': 1, 'text':1,
-						'user.id':1, 'entities.user_mentions':1}
-		}
+# query = {	'spec': {'geo': {'$ne': None }},	#Only geolocated tweets?
+# 			'fields':{	'_id':0, 'id':1, 'user.screen_name': 1, 'text':1,
+# 						'user.id':1, 'entities.user_mentions':1}
+# 		}
 
 def user_mentions_graph(tweets_array):	# Required fields: 'user.id', 'entities.user_mentions'
 	'''Creates User Mentions Graph:
@@ -97,7 +97,7 @@ if __name__ == '__main__':
 	
 	umg = user_mentions_graph(user_mentions)
 
-	large_component = nx.weakly_connected_component_subgraphs(umg)[0].to_undirected()
+	large_component = nx.weakly_connected_component_subgraphs(umg)[0]
 	print "Nodes in Giant Component: ",len(large_component.nodes())
 
 
@@ -106,9 +106,24 @@ if __name__ == '__main__':
 	print f.get_graph_reciprocity(large_component)
 	print f.get_graph_reciprocity(large_component, weighted=False)
 
-	f.print_top_reciprocated_nodes(large_component, 10)
+	f.print_top_reciprocated_nodes(large_component, count=10)
 
+	x,y,labels = f.print_top_reciprocated_nodes(large_component, count=10, return_graph=True)
 
+	fig, ax = plt.subplots()
+	
+	ax.scatter(x, y)
+	
+	for i, txt in enumerate(labels):
+		# if len(txt) %2==0:
+		ax.annotate(txt, (x[i], y[i]), rotation=15,va='bottom')
+
+	plt.title('Out Degree vs. Reciprocity')
+ 	plt.ylabel("Reciprocity per Node")
+ 	plt.xlabel("Out Degree")
+	
+	plt.show()
+	# I want to compare this data to their out_degree...
 
 
 	# sum = 0

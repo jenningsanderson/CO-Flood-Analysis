@@ -185,14 +185,24 @@ def print_betweenness_centrality(graph, amount=10):
 		print "{:15s}".format(graph.node[node]['label']), 
 		print "{0:4f}".format(bc[node])
 
-def print_top_reciprocated_nodes(graph, count):
+def print_top_reciprocated_nodes(graph, count=10, reverse=True, return_graph=False):
 	recips = {}
 	recip_return = {}
+	recip_to_graph=[]
+	out_degrees=graph.out_degree() #Not counting the weight of the edges.
+	out_degree_to_graph=[] 
+	labels = []
 	for node in graph.nodes():
 		recips[node] = get_reciprocity_of_node(graph, node)
-	for w in sorted(recips, key=recips.get, reverse=True)[0:count]:
-		print graph.node[w]['label'], "&","{0:4f}".format(recips[w]), "\\\\"
-	#return recip_return
+	for w in sorted(recips, key=recips.get, reverse=reverse)[0:count]:
+		if not return_graph:
+			print graph.node[w]['label'], "&","{0:4f}".format(recips[w]), "\\\\"
+		else:
+			recip_to_graph.append(recips[w])
+			out_degree_to_graph.append(out_degrees[w])
+			labels.append(graph.node[w]['label'])
+	if return_graph:
+		return [out_degree_to_graph, recip_to_graph, labels]
 
 
 if __name__ == '__main__':

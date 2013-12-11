@@ -21,7 +21,7 @@ def get_data_list(time_step=60*60):
 	'''Returns dictionary:
 		Keys: Time Steps
 		Values: #Tweets in TimeStep'''
-	tweets = bf.query_mongo_get_list(query, limit=200000)
+	tweets = bf.query_mongo_get_list(query)
 
 	flood_days = {}
 	
@@ -61,19 +61,27 @@ def make_plot(time_steps, time_step='Day'):
 	to_graph.sort()
 	to_graph.reverse()
 
-	top_ten = []
+	top_times = []
 	for i in to_graph[0:100]:
-		top_ten.append(sorted_keys[to_graph_original.index(i)])
-		print top_ten[len(top_ten)-1], i
+		top_times.append(sorted_keys[to_graph_original.index(i)])
+		print top_times[len(top_times)-1], i
 
-	return top_ten
+	return top_times
 
 
 if __name__ == '__main__':
 	
 	hours = get_data_list(time_step=60*60)
 
-	top_ten = make_plot(hours, 'Hour')
+	print len(hours)
+	for i in hours.keys():
+		print i, type(i), hours[i]
+
+	#top_ten = make_plot(hours, 'Hour')
+
+	#for i in top_ten:
+	#	print type(i), i
+	#print len(top_ten)
 
 
 
