@@ -51,6 +51,11 @@ def create_user_tweet_graph():
 		counter+=1
 		if counter%1000==0:
 			print counter,
+
+	degrees = graph.degree(weight='weight')				# Need to get the appropriate weights
+	for node in degrees.keys():
+		graph.node[node]['real_degree'] = degrees[node]
+	
 	return graph
 
 ################################# RUN TIME ######################################
@@ -82,10 +87,6 @@ if __name__ == '__main__':
 	#Good - that works!
 	# print 'Making graph of ',len(graph.nodes()),'nodes and', len(graph.edges()), 'edges'
 	# f.draw_graph(histogram, style='ro', scale='log')
-
-	# The only reason is that first data point, which is really, really lame.
-
-
 
 
 

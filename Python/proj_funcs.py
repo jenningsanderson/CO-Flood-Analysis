@@ -77,9 +77,9 @@ def draw_network_plt(graph, name=False, scale=100):
 	if 'weight' in graph.nodes(data=True)[0][1].keys():
 		sizes = nx.get_node_attributes(graph, 'weight').values()
 		scaled_sizes = [x * scale for x in sizes] 
-	if colors and weight:
+	if colors and scaled_sizes:
 		nx.draw(graph, node_size=scaled_sizes, node_color=colors)
-	elif colors and not weight:
+	elif colors and not scaled_sizes:
 		nx.draw(graph, node_color=colors)
 	elif scaled_sizes and not colors:
 		nx.draw(graph, node_size=scaled_sizes)

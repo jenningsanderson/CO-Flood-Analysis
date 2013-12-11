@@ -78,7 +78,6 @@ def user_mentions_graph(tweets_array):	# Required fields: 'user.id', 'entities.u
 	 	if counter % 1000 == 0:							# For status update, can take a while
 	 		print counter,
 
-	# This may throw an error, and may be why I didn't do it before...
 	in_degree = g.in_degree(weight='weight')
 	out_degree = g.out_degree(weight='weight')
 	for node in g.nodes():
@@ -86,8 +85,6 @@ def user_mentions_graph(tweets_array):	# Required fields: 'user.id', 'entities.u
 		g.node[node]['in_degree'] = in_degree[node]
 		g.node[node]['out_degree'] = out_degree[node]
 	
-
-
 	print "----DONE----"	
 	return g
 
@@ -100,8 +97,8 @@ if __name__ == '__main__':
 	
 	umg = user_mentions_graph(user_mentions)
 
-	#large_component = nx.weakly_connected_component_subgraphs(umg)[0]
-	large_component = umg
+	large_component = nx.weakly_connected_component_subgraphs(umg)[0]
+	#large_component = umg
 
 	#Compute the betweenness centrality of the User-mentions graph (For all the users)
 	#bc = nx.betweenness_centrality(large_component)
@@ -109,17 +106,6 @@ if __name__ == '__main__':
 	#print 'zeroes', bc.values().count(0.0)
 
 	#f.draw_network_plt(large_component, scale=1)
-
-	degrees = large_component.degree(weight='weight')
-	in_degree = large_component.in_degree(weight='weight')
-	out_degree = large_component.out_degree(weight='weight')	#Now it counts the weights...
-	for node in sorted(degrees, key=degrees.get, reverse=True):
-		#print node, degrees[node], large_component.node[node]['label']
-		large_component.node[node]['weight']=degrees[node]
-	print "neighbor length:", len(large_component.neighbors(741150194))
-	print "in_degree:",	in_degree[741150194]
-	print "out degree: ", out_degree[741150194]
-
 
 	# for node in sorted(bc, key=bc.get, reverse=True)[0:10]:
 	# 	query = {'spec': {'user.id': int(node) }, 'fields':{'_id':0, 'user.screen_name': 1} }
@@ -157,8 +143,6 @@ if __name__ == '__main__':
 	# 		this_data = bf.query_mongo_get_list(query, limit=1)
 	# 		print this_data['user']['screen_name'], comma, 
 	# 	print "\\\\"
-
-
 
 
 	# degrees = nx.degree(umg)
@@ -217,3 +201,5 @@ if __name__ == '__main__':
 	# print len((umg.nodes()))
 	# draw_graph(bc, sort=True, style="ro" )
 	# draw_graph(dc, sort=True, style="go", y_scale='log')
+
+
