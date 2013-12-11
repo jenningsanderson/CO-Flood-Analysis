@@ -100,10 +100,20 @@ if __name__ == '__main__':
 	#large_component = nx.weakly_connected_component_subgraphs(umg)[0]
 	large_component = umg
 
+	sum = 0
+	for node in umg.nodes():
+		if "," in umg.node[node]['label']:
+			print umg.node[node]['label'], node, 
+			query = {	'spec':	{'user.id':node}, #{'geo': {'$ne': None }},	#Only geolocated tweets?
+			'fields':{	'_id':0, 'id':1, 'user.screen_name': 1, 'text':1,
+						'user.id':1, 'entities.user_mentions':1}
+		}
+			result = len(bf.query_mongo_get_list(query))
+			print result
+			sum+=result
 
-	for node in umg.nodes()[0:10]:
-		if len(umg.node[node]['label'])>1:
-			print umg.node[node]['label']
+	print "these tweets: ", sum
+
 	#Compute the betweenness centrality of the User-mentions graph (For all the users)
 	#bc = nx.betweenness_centrality(large_component)
 	#print len(bc.values())
