@@ -140,7 +140,7 @@ def get_graph_reciprocity(graph, weighted=True):
 		edge_list = new_list
 		total_edges = len(new_list)
 	
-	elif (not weighted and edge_list[0][2] is not None):
+	else:
 		for edge in edge_list:
 			 new_list.append( (edge[0],edge[1]) )
 		edge_list = new_list
@@ -150,7 +150,10 @@ def get_graph_reciprocity(graph, weighted=True):
 		if (edge[1],edge[0]) in edge_list:
 			reciprocated_links+=2
 			edge_list.remove( (edge[1], edge[0]) )
-	return reciprocated_links / total_edges
+	if total_edges != 0:
+		return reciprocated_links / total_edges
+	else:
+		return 0
 
 def get_avg(list):
 	"""Simply returns the average of a list"""

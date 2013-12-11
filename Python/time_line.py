@@ -17,7 +17,7 @@ query = {	'spec':	 { },						# We want all tweets
 						'user.id'               : 1, 		# User ID
 						'created_at'			: 1} }		# This is a date, may have to adjust zone.
 
-def get_data_list(time_step=60*60):
+def get_data_list(time_step=60, just_count=True, limit=False):
 	'''Returns dictionary:
 		Keys: Time Steps
 		Values: #Tweets in TimeStep'''
@@ -32,51 +32,68 @@ def get_data_list(time_step=60*60):
 			flood_days[this_hour].append(tweet)
 		else:
 			flood_days[this_hour] = [tweet]
-	return flood_days
+	if just_count:
+		for i in flood_days.keys():
+			flood_days[i] = len(flood_days[i])
+		return flood_days
+	else:
+		return flood_days
 
-def make_plot(time_steps, time_step='Day'):
+def make_plot_return_top(time_steps, time_step='Day', make_plot=True, limit=100, reverse=True):
 	'''Create plot from time_steps dictionary'''
 	to_graph = []
 	sorted_keys = time_steps.keys()
 	sorted_keys.sort()
-
-	#print sorted_keys
 	
 	for key in sorted_keys:
 		to_graph.append(len(time_steps[key]))
 
-	#max_index = to_graph.index(max(to_graph))
-	#print sorted_keys[max_index], to_graph[max_index]
-
-	plt.plot(sorted_keys, to_graph)
-	locs, labels = plt.xticks()
-	plt.title('Twitter Activity by '+str(time_step)) #Modify this to apply
-	plt.ylabel('Tweets per '+str(time_step))		 #Modify this to apply
-	plt.xlabel(str(time_step))
-	plt.setp(labels, rotation=90)
-	plt.show()
+	if make_plot:
+		plt.plot(sorted_keys, to_graph)
+		locs, labels = plt.xticks()
+		plt.title('Twitter Activity by '+str(time_step)) #Modify this to apply
+		plt.ylabel('Tweets per '+str(time_step))		 #Modify this to apply
+		plt.xlabel(str(time_step))
+		plt.setp(labels, rotation=90)
+		plt.show()
 
 	to_graph_original = copy.deepcopy(to_graph)
-
 	to_graph.sort()
-	to_graph.reverse()
+	if reverse:
+		to_graph.reverse()
 
 	top_times = []
-	for i in to_graph[0:100]:
+	top_dict = {}
+	for i in to_graph[0:limit]:
 		top_times.append(sorted_keys[to_graph_original.index(i)])
-		print top_times[len(top_times)-1], i
+		top_dict[top_times[len(top_times)-1]] = i
+		#print top_times[len(top_times)-1], i
 
-	return top_times
+	return top_dict
 
 
 if __name__ == '__main__':
+
+	minutes = get_data_list(time_step=60, just_count=False)
+
+	#for i in minutes.keys()[0:10]:
+	#	print i, len(minutes[i])
+
+	dict = make_plot_return_top(minutes, make_plot=False, limit=15)
+
+	for i in dict.keys()[0:10]:
+		print i, dict[i]
+	vals = dict.values()
+	vals.sort()
+	vals.reverse()
+	print vals 			#Top minutes with these tweets.
+
+	#test_hours = get_data_list(time_step=60*60)
+	#vals = test_hours.values()
+	#vals.sort()
+	#vals.reverse()
+	#print vals
 	
-	hours = get_data_list(time_step=60*60)
-
-	print len(hours)
-	for i in hours.keys():
-		print i, type(i), hours[i]
-
 	#top_ten = make_plot(hours, 'Hour')
 
 	#for i in top_ten:

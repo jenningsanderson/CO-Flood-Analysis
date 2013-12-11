@@ -86,7 +86,7 @@ def make_triangle_cc_plot(graph, threshold=100, show_labels=False):
 	if show_labels:
 		for i, txt in enumerate(labels):
 			if len(txt) %2==0:
-				ax.annotate(txt, (cc_to_graph[i], tris_to_graph[i]))
+				ax.annotate(txt, (cc_to_graph[i], tris_to_graph[i]), rotation=20)
 
 	plt.title('Number of Triangles vs. Clustering Coefficient')
  	plt.ylabel("Triangles")
@@ -110,7 +110,7 @@ if __name__ == '__main__':
 
 	f.print_betweenness_centrality(pruned_graph)
 
-	#make_triangle_cc_plot(pruned_graph, show_labels=True, threshold=300).show()
+	make_triangle_cc_plot(pruned_graph, show_labels=True, threshold=300).show()
 
 	#f.write_network_gml(pruned_graph, 'retweets_hashtag_gt800_real_degree')
 
