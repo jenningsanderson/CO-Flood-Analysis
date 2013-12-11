@@ -47,11 +47,15 @@ def retweeted_graph(tweets_array):
 	 				g.add_edge(tag1, tag2, {'weight':0})
 	 			elif tag1 is not tag2:
 	 				g[tag1][tag2]['weight']+=1
-
+	 	
 	 	if counter % 1000 == 0:		# For status update, can take a while
 	 		print counter,
-	 	
-	print "----DONE----"	
+	#Apply the appropriate degree to each hashtag...
+	degrees = g.degree(weight='weight')
+	for node in degrees.keys():
+		g.node[node]['real_degree']=degrees[node]
+	
+	print "----DONE----"
 	return g
 
 def make_triangle_cc_plot(graph, threshold=100, show_labels=False):
@@ -60,7 +64,7 @@ def make_triangle_cc_plot(graph, threshold=100, show_labels=False):
 		Threshold defines maximum # triangles per node to be included in plot.
 		show_labels (defaults to false) tells matplotlib to show labels or not"""
 	tris =  nx.triangles(graph)
-	clustering = nx.clustering(graph)
+	clustering = nx.clustering(graph, weight='weight')
 	cc_to_graph = []
 	tris_to_graph = []
 	labels = []
@@ -80,7 +84,8 @@ def make_triangle_cc_plot(graph, threshold=100, show_labels=False):
 	
 	if show_labels:
 		for i, txt in enumerate(labels):
-			ax.annotate(txt, (cc_to_graph[i], tris_to_graph[i]))
+			if len(txt) %2==0:
+				ax.annotate(txt, (cc_to_graph[i], tris_to_graph[i]))
 
 	plt.title('Number of Triangles vs. Clustering Coefficient')
  	plt.ylabel("Triangles")
@@ -99,12 +104,12 @@ if __name__ == '__main__':
 
 	pruned_graph = retweets_graph.copy()			# Prune graph to hashtags > 700
 	for node in pruned_graph.nodes():
-		if pruned_graph.node[node]['weight'] < 700:
+		if pruned_graph.node[node]['weight'] < 800:
 			pruned_graph.remove_node(node)
 
 
-	make_triangle_cc_plot(pruned_graph, show_labels=True, threshold=1000).show()
+	make_triangle_cc_plot(pruned_graph, show_labels=True, threshold=300).show()
 
-	#f.write_network_gml(pruned_graph, 'retweets_hashtag_gt500')
+	f.write_network_gml(pruned_graph, 'retweets_hashtag_gt800_real_degree')
 
 	#f.draw_network_plt(pruned_graph, scale=(.1))	#For quick visualization

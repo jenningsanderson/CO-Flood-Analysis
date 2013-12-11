@@ -46,60 +46,93 @@ def user_mentions_graph(tweets_array):	# Required fields: 'user.id', 'entities.u
 	'''Creates User Mentions Graph:
 		Nodes: Users
 		Edges: Exist if user mentions user in tweet, weight = frequency'''
-	user_names = {}
 	g = nx.DiGraph()				#Make it a directed graph
 	counter = 0
-	user_tweet_counts = {}	
+	user_names = {}
 	for tweet in tweets_array:
 		counter += 1
 	 	this_user = int(tweet['user']['id'])
-	 	user_names[this_user] = tweet['user']['screen_name']
-	 	mentions = tweet['entities']['user_mentions']
-	 	if user_tweet_counts.has_key(this_user):		# Count the tweets per user
-	 		user_tweet_counts[this_user] += 1
+
+	 	# Handle multiple user names - will see if it is important to do so.
+	 	if user_names.has_key(this_user) and not tweet['user']['screen_name'].encode('ascii', 'ignore') in user_names[this_user]:
+	 		#http://stackoverflow.com/questions/3224268/python-unicode-encode-error		
+	 		user_names[this_user].append(tweet['user']['screen_name'].encode('ascii', 'ignore'))
 	 	else:
-	 		user_tweet_counts[this_user] = 1
-	 	for j in mentions:								# Iterate through each user name in tweet
-	 		mention_user = int(j['id'])
-			user_names[mention_user] = j['screen_name']
-			#http://stackoverflow.com/questions/3224268/python-unicode-encode-error					
-	 		if not g.has_edge(this_user, mention_user):
-	 			g.add_edge(this_user, mention_user, {'weight':0})
+	 		user_names[this_user] = [tweet['user']['screen_name'].encode('ascii', 'ignore')]
+	 	
+	 	#Iterate through all of the mentioned users in a tweet
+	 	mentions = tweet['entities']['user_mentions']
+	 	for mentioned in mentions:								# Iterate through each user name in tweet
+	 		
+	 		mentioned_user = int(mentioned['id'])
+			if user_names.has_key(mentioned_user) and not mentioned['screen_name'].encode('ascii', 'ignore') in user_names[mentioned_user]:
+	 			user_names[mentioned_user].append(mentioned['screen_name'].encode('ascii', 'ignore'))
 	 		else:
-	 			g[this_user][mention_user]['weight']+=1
+	 			user_names[mentioned_user] = [mentioned['screen_name'].encode('ascii', 'ignore')]
+			
+	 		if not g.has_edge(this_user, mentioned_user):
+	 			g.add_edge(this_user, mentioned_user, weight=1)
+	 		else:
+	 			g[this_user][mentioned_user]['weight']+=1
+	 	
 	 	if counter % 1000 == 0:							# For status update, can take a while
 	 		print counter,
+
+	# This may throw an error, and may be why I didn't do it before...
+	in_degree = g.in_degree(weight='weight')
+	out_degree = g.out_degree(weight='weight')
+	for node in g.nodes():
+		g.node[node]['label'] = str(user_names[node])
+		g.node[node]['in_degree'] = in_degree[node]
+		g.node[node]['out_degree'] = out_degree[node]
+	
+
+
 	print "----DONE----"	
-	return [g, user_tweet_counts]
+	return g
 
 if __name__ == '__main__':
 	print 'Start:', start
 	print 'End:', end
 	
 	user_mentions = bf.query_mongo_get_list(query)
-	#print len(user_mentions)
+	print len(user_mentions)
 	
-	umg, user_tweet_counts = user_mentions_graph(user_mentions)
+	umg = user_mentions_graph(user_mentions)
 
-	large_component = nx.weakly_connected_component_subgraphs(umg)[0]
+	#large_component = nx.weakly_connected_component_subgraphs(umg)[0]
+	large_component = umg
 
 	#Compute the betweenness centrality of the User-mentions graph (For all the users)
-	bc = nx.betweenness_centrality(large_component)
-	print len(bc.values())
-	print 'zeroes', bc.values().count(0.0)
+	#bc = nx.betweenness_centrality(large_component)
+	#print len(bc.values())
+	#print 'zeroes', bc.values().count(0.0)
 
-	for node in sorted(bc, key=bc.get, reverse=True)[0:10]:
-		query = {'spec': {'user.id': int(node) }, 'fields':{'_id':0, 'user.screen_name': 1} }
-		this_data = bf.query_mongo_get_list(query, limit=1)
-		print this_data['user']['screen_name'],'&', "{0:.4f}".format(bc[node]), '\\\\'
+	#f.draw_network_plt(large_component, scale=1)
 
-	#f.draw_graph(bc, sort=True, reverse=True, style='ro', scale='log')
+	degrees = large_component.degree(weight='weight')
+	in_degree = large_component.in_degree(weight='weight')
+	out_degree = large_component.out_degree(weight='weight')	#Now it counts the weights...
+	for node in sorted(degrees, key=degrees.get, reverse=True):
+		#print node, degrees[node], large_component.node[node]['label']
+		large_component.node[node]['weight']=degrees[node]
+	print "neighbor length:", len(large_component.neighbors(741150194))
+	print "in_degree:",	in_degree[741150194]
+	print "out degree: ", out_degree[741150194]
 
-	for node in large_component.nodes():
-		large_component.node[node]['weight'] = int(10000000*bc[node])
-		large_component.node[node]['label'] = user_names[node]
 
-	f.write_network_gml(large_component, 'lc_2_big_hour_bc')
+	# for node in sorted(bc, key=bc.get, reverse=True)[0:10]:
+	# 	query = {'spec': {'user.id': int(node) }, 'fields':{'_id':0, 'user.screen_name': 1} }
+	# 	this_data = bf.query_mongo_get_list(query, limit=1)
+	# 	print this_data['user']['screen_name'],'&', "{0:.4f}".format(bc[node]), '\\\\'
+
+	# #f.draw_graph(bc, sort=True, reverse=True, style='ro', scale='log')
+
+	# for node in large_component.nodes():
+	# 	large_component.node[node]['weight'] = int(10000000*bc[node])
+	# 	large_component.node[node]['label'] = user_names[node]
+
+	f.write_network_gml(large_component, 'testing_degrees')
 
 
 	# self_loop_weights = {}

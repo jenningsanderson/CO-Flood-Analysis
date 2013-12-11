@@ -143,9 +143,9 @@ def reciprocity_by_degree(graph, degree_type='in', size=20):
 	avg_reciprocity = 0.0
 	for w in sorted(degrees, key=degrees.get, reverse=True)[0:size]:
 		print degrees[w], "&",
-		query = {'spec': {'user.id': int(w) }, 'fields':{'_id':0, 'user.screen_name': 1, 'text':1} }
-		this_data = bf.query_mongo_get_list(query, limit=1)
 		reciprocity = f.get_reciprocity_of_node(umg, int(w))
 		print this_data['user']['screen_name'], "\\\\"#,"&", "{0:.4f}".format(reciprocity),"\\\\"
 		avg_reciprocity+=reciprocity
 	print avg_reciprocity/size
+
+
