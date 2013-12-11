@@ -29,18 +29,18 @@ import datetime
 start = datetime.datetime(2013, 9, 12, 17, 00, 00)
 end = datetime.datetime(2013, 9, 12, 18, 00, 00)
 
-query = {	'spec':	{'created_at': {'$gt': start, '$lt': end } },
-			'fields':{	'_id'		:0, 
-						'id'		:1, 
-						'user.screen_name': 1, 
-						'text'		:1,
-						'user.id'	:1, 
-						'entities.user_mentions':1 }	}
+# query = {	'spec':	{'created_at': {'$gt': start, '$lt': end } },
+# 			'fields':{	'_id'		:0, 
+# 						'id'		:1, 
+# 						'user.screen_name': 1, 
+# 						'text'		:1,
+# 						'user.id'	:1, 
+# 						'entities.user_mentions':1 }	}
 
-# query = {	'spec':	{'geo': {'$ne': None }},	#Only geolocated tweets?
-# 			'fields':{	'_id':0, 'id':1, 'user.screen_name': 1, 'text':1,
-# 						'user.id':1, 'entities.user_mentions':1}
-# 		}
+query = {	'spec':	{}, #{'geo': {'$ne': None }},	#Only geolocated tweets?
+			'fields':{	'_id':0, 'id':1, 'user.screen_name': 1, 'text':1,
+						'user.id':1, 'entities.user_mentions':1}
+		}
 
 def user_mentions_graph(tweets_array):	# Required fields: 'user.id', 'entities.user_mentions'
 	'''Creates User Mentions Graph:
@@ -81,7 +81,7 @@ def user_mentions_graph(tweets_array):	# Required fields: 'user.id', 'entities.u
 	in_degree = g.in_degree(weight='weight')
 	out_degree = g.out_degree(weight='weight')
 	for node in g.nodes():
-		g.node[node]['label'] = str(user_names[node])
+		g.node[node]['label'] = str(user_names[node]).strip('[\'\]')
 		g.node[node]['in_degree'] = in_degree[node]
 		g.node[node]['out_degree'] = out_degree[node]
 	
@@ -97,9 +97,13 @@ if __name__ == '__main__':
 	
 	umg = user_mentions_graph(user_mentions)
 
-	large_component = nx.weakly_connected_component_subgraphs(umg)[0]
-	#large_component = umg
+	#large_component = nx.weakly_connected_component_subgraphs(umg)[0]
+	large_component = umg
 
+
+	for node in umg.nodes()[0:10]:
+		if len(umg.node[node]['label'])>1:
+			print umg.node[node]['label']
 	#Compute the betweenness centrality of the User-mentions graph (For all the users)
 	#bc = nx.betweenness_centrality(large_component)
 	#print len(bc.values())
@@ -118,7 +122,7 @@ if __name__ == '__main__':
 	# 	large_component.node[node]['weight'] = int(10000000*bc[node])
 	# 	large_component.node[node]['label'] = user_names[node]
 
-	f.write_network_gml(large_component, 'testing_degrees')
+	#f.write_network_gml(large_component, 'testing_degrees')
 
 
 	# self_loop_weights = {}
