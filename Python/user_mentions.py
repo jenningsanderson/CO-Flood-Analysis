@@ -10,7 +10,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import datetime
 
-in_array_query = []
+in_array_users_query = []
+nodes_array = []
 
 #start = datetime.datetime(2013, 9, 13, 5, 00, 00)
 #end = datetime.datetime(2013, 9, 13, 6, 00, 00)
@@ -23,17 +24,16 @@ in_array_query = []
 # 						'user.id'	:1, 
 # 						'entities.user_mentions':1 }	}
 
-# query = {	'spec': {'geo': {'$ne': None }},	#Only geolocated tweets?
-# 			'fields':{	'_id':0, 'id':1, 'user.screen_name': 1, 'text':1,
-# 						'user.id':1, 'entities.user_mentions':1}
-# 		}
-
-query = {	'spec': {'user.screen_name': {'$in': }},	#Only geolocated tweets?
+query = {	'spec': {'geo': {'$ne': None }},	#Only geolocated tweets?
 			'fields':{	'_id':0, 'id':1, 'user.screen_name': 1, 'text':1,
 						'user.id':1, 'entities.user_mentions':1}
 		}
 
-
+#Query for getting tweets that mention specific users.
+query2 = {	'spec': {'$or': [{'user.screen_name':{'$in':in_array_users_query}}, {'entities.user_mentions.screen_name':{'$in':in_array_users_query}}]},	#Only geolocated tweets?
+			'fields':{	'_id':0, 'id':1, 'user.screen_name': 1, 'text':1,
+						'user.id':1, 'entities.user_mentions':1}
+		}
 
 def user_mentions_graph(tweets_array):
 	'''Creates User Mentions Graph:
@@ -110,9 +110,11 @@ def plot_degree_vs_reciprocity():
 def print_top_betweenness(component, size=10):
 	bc = nx.betweenness_centrality(component, weight='weight', normalized=True)
 	for node in sorted(bc, key=bc.get, reverse=True)[0:size]:
-		query = {'spec': {'user.id': int(node) }, 'fields':{'_id':0, 'user.screen_name': 1} }
+		query = {'spec': {'user.id': int(node) }, 'fields':{'_id':0,'user.screen_name': 1} }
 		this_data = bf.query_mongo_get_list(query, limit=1)
 		print this_data['user']['screen_name'],'&', "{0:.4f}".format(bc[node]), '\\\\'
+		in_array_users_query.append(this_data['user']['screen_name'])
+		nodes_array.append(node)
 	return bc
 
 def find_self_loops(graph):
@@ -157,12 +159,32 @@ if __name__ == '__main__':
 
 	undirected_umg = umg.to_undirected()
 
-	f.draw_graph(print_top_betweenness(undirected_umg, 10), 
-		sort=True, reverse=True, style='ro', scale='log', 
-		title="Betweenness Centrality of Geo-Tagged User Mentions", 
-		x_axis="Nodes", y_axis="Betweenness Centrality")
+	print_top_betweenness(undirected_umg, 10)
+	#f.draw_graph(print_top_betweenness(undirected_umg, 10), 
+		# sort=True, reverse=True, style='ro', scale='log', 
+		# title="Betweenness Centrality of Geo-Tagged User Mentions", 
+		# x_axis="Nodes", y_axis="Betweenness Centrality")
 
+	#Now we've identified the users that we care about as in_array_query
+	print "Using above list to create new graph, calling all users that tweeted at those users"
+	user_mentions2 = bf.query_mongo_get_list(query2)	#Query defined above
+	print "Tweets found:", len(user_mentions2), "Making Graph..."
+	
+	umg2 = user_mentions_graph(user_mentions2)
 
+	print "Number of components:",
+	components = nx.weakly_connected_component_subgraphs(umg2)
+	print len(components)
+	large_component = components[0]
+	print "Nodes in Giant Component: ",len(large_component.nodes())
+
+	#print f.get_graph_reciprocity(large_component)
+	#print f.get_graph_reciprocity(large_component, weighted=False)
+	for i in range(0, len(nodes_array)):
+		print in_array_users_query[i], "&", "{0:.4f}".format( f.get_reciprocity_of_node(umg2, nodes_array[i]) ), "\\\\"
+	
+
+	f.write_network_gml(umg2, 'users-mentioning-geo-tagged-users-digraph')
 
 	#For Geo-tagged:
 	#show_component_histogram(components, bins=(0,1,2,3,4,5,6,7,10,13,500,600))
