@@ -184,7 +184,7 @@ if __name__ == '__main__':
 		print in_array_users_query[i], "&", "{0:.4f}".format( f.get_reciprocity_of_node(umg2, nodes_array[i]) ), "\\\\"
 	
 
-	f.write_network_gml(umg2, 'users-mentioning-geo-tagged-users-digraph')
+	#f.write_network_gml(umg2, 'users-mentioning-geo-tagged-users-digraph')
 
 	#For Geo-tagged:
 	#show_component_histogram(components, bins=(0,1,2,3,4,5,6,7,10,13,500,600))

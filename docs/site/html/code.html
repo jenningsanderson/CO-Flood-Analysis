@@ -84,9 +84,23 @@ Options: If name is specified, will save with name, otherwise will show plot</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="proj_funcs.get_graph_reciprocity">
+<tt class="descclassname">proj_funcs.</tt><tt class="descname">get_graph_reciprocity</tt><big>(</big><em>graph</em>, <em>weighted=True</em><big>)</big><a class="headerlink" href="#proj_funcs.get_graph_reciprocity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute graph reciprocity: reciprocated links / total links</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="proj_funcs.get_reciprocity_of_node">
 <tt class="descclassname">proj_funcs.</tt><tt class="descname">get_reciprocity_of_node</tt><big>(</big><em>graph</em>, <em>node</em><big>)</big><a class="reference internal" href="_modules/proj_funcs.html#get_reciprocity_of_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proj_funcs.get_reciprocity_of_node" title="Permalink to this definition">¶</a></dt>
 <dd><p>Custom reciprocity function, must compare to function in networks text</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="proj_funcs.print_betweenness_centrality">
+<tt class="descclassname">proj_funcs.</tt><tt class="descname">print_betweenness_centrality</tt><big>(</big><em>graph</em>, <em>amount=10</em><big>)</big><a class="headerlink" href="#proj_funcs.print_betweenness_centrality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the betweenness centrality for the top specificed # of nodes.
+Uses NetworkX&#8217;s betweenness_centrality function.
+Depends on having weighted</p>
 </dd></dl>
 
 <dl class="function">
@@ -120,9 +134,10 @@ Must include a filename.  This can then be easily imported into Gephi</p>
 <div class="section" id="module-bf_load">
 <span id="pymongo-interfacing-module"></span><h2>PyMongo Interfacing Module<a class="headerlink" href="#module-bf_load" title="Permalink to this headline">¶</a></h2>
 <p>Jennings Anderson 2013
-CSCI 5352: Final Project: Boulder Flooding Twitter Network Analysis</p>
-<p>This module interfaces with MongoDB and can pickle networkx objects
-It is designed to do all of the database i/o for the project</p>
+| CSCI 5352: Final Project: Boulder Flooding Twitter Network Analysis
+|
+| This module interfaces with MongoDB and can pickle networkx objects
+| It is designed to do all of the database i/o for the project</p>
 <dl class="function">
 <dt id="bf_load.pickle_this">
 <tt class="descclassname">bf_load.</tt><tt class="descname">pickle_this</tt><big>(</big><em>object_to_pickle</em>, <em>name</em><big>)</big><a class="reference internal" href="_modules/bf_load.html#pickle_this"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bf_load.pickle_this" title="Permalink to this definition">¶</a></dt>
@@ -164,15 +179,15 @@ CSCI 5352: Final Project: Boulder Flooding</p>
 <p>This module is for visualizing the timeline of the flooding for temporal analysis.</p>
 <dl class="function">
 <dt id="time_line.get_data_list">
-<tt class="descclassname">time_line.</tt><tt class="descname">get_data_list</tt><big>(</big><em>time_step=3600</em><big>)</big><a class="reference internal" href="_modules/time_line.html#get_data_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_line.get_data_list" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">time_line.</tt><tt class="descname">get_data_list</tt><big>(</big><em>time_step=60</em>, <em>just_count=True</em>, <em>limit=False</em><big>)</big><a class="reference internal" href="_modules/time_line.html#get_data_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_line.get_data_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns dictionary:
 Keys: Time Steps
 Values: #Tweets in TimeStep</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="time_line.make_plot">
-<tt class="descclassname">time_line.</tt><tt class="descname">make_plot</tt><big>(</big><em>time_steps</em>, <em>time_step='Day'</em><big>)</big><a class="reference internal" href="_modules/time_line.html#make_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_line.make_plot" title="Permalink to this definition">¶</a></dt>
+<dt id="time_line.make_plot_return_top">
+<tt class="descclassname">time_line.</tt><tt class="descname">make_plot_return_top</tt><big>(</big><em>time_steps</em>, <em>time_step='Day'</em>, <em>make_plot=True</em>, <em>limit=100</em>, <em>reverse=True</em><big>)</big><a class="headerlink" href="#time_line.make_plot_return_top" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create plot from time_steps dictionary</p>
 </dd></dl>
 
@@ -181,7 +196,8 @@ Values: #Tweets in TimeStep</p>
 <span id="user-mentions-module"></span><h2>User Mentions Module<a class="headerlink" href="#module-user_mentions" title="Permalink to this headline">¶</a></h2>
 <p>Jennings Anderson 2013
 CSCI 5352: Final Project: Boulder Flooding</p>
-<p>This module handles the user mentions graph and does computations for that.</p>
+<p>This module handles the user mentions graph where users tag other users in
+the actual tweet.</p>
 <dl class="function">
 <dt id="user_mentions.user_mentions_graph">
 <tt class="descclassname">user_mentions.</tt><tt class="descname">user_mentions_graph</tt><big>(</big><em>tweets_array</em><big>)</big><a class="reference internal" href="_modules/user_mentions.html#user_mentions_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#user_mentions.user_mentions_graph" title="Permalink to this definition">¶</a></dt>

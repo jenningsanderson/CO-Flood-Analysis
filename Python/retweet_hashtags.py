@@ -14,11 +14,16 @@ import matplotlib.pyplot as plt
 import re
 
 
+##################################################################################
+####					RELEVANT QUERIES FOR DATASET HERE 
+##################################################################################
 
 query = {	'spec':	{'text': re.compile('(RT|MT)', re.IGNORECASE) },#, 'geo': {'$ne': None }},	#Only Geolocated tweets #For now.
 			'fields':{	'_id':0, 'id':1, 'user.screen_name': 1, 'text':1,
 						'user.id':1, 'entities.hashtags':1}
 		}
+
+##################################################################################
 
 def retweeted_graph(tweets_array):
 	"""Returns graph from tweets array returned from mongoDB"""

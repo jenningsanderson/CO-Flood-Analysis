@@ -1,8 +1,6 @@
-"""Jennings Anderson 2013
-CSCI 5352: Final Project: Boulder Flooding Twitter Network Analysis
-
-This module interfaces with MongoDB and can pickle networkx objects
-It is designed to do all of the database i/o for the project"""
+"""
+|  This module interfaces with MongoDB and can pickle networkx objects
+|  It is designed to do all of the database i/o for the project"""
 
 import json
 import pickle
@@ -12,7 +10,7 @@ from datetime import datetime
 
 ###################  MAIN TWEET FILE -- EACH LINE IS A JSON OBJECT     ################
 file = open('../../../../Documents/Boulder_Floods/boulder_floods.json', 'r')
-db = MongoClient().mydb.tweets	#Main Collection
+db = MongoClient().mydb.tweets2	#Main Collection
 #######################################################################################
 
 def populate_mongoDB():
@@ -22,7 +20,8 @@ def populate_mongoDB():
 	counter = 0
 	for line in file:				# Standard iteration through file
 		tweet = json.loads(line) 	# Recognize it as a JSON object
-		tweet['created_at'] = datetime.strptime(tweet['created_at'].replace('+0000',''), '%a %b %d %H:%M:%S %Y')
+		tweet['created_at'] = datetime.strptime(tweet['created_at'].replace('+0000',''),
+																	'%a %b %d %H:%M:%S %Y')
 		db.insert(tweet)			# Actually insert it into the tweets collection
 		if counter % 10000 == 0:	# Show import update
 			print counter,
@@ -59,5 +58,7 @@ def unpickle_this(path):					#Deprecated in final version: too slow
 	print "done"
 	return this_obj
 
-if __name__ == '__main__':					# If this file is called direclty, then run import
-	populate_mongoDB()
+if __name__ == '__main__':					# If this file is called direclty, run import
+	print "Running Import..."
+	#populate_mongoDB()						# ONLY RUN ONCE; COMMENTED OUT FOR SAFETY
+	print "done"
