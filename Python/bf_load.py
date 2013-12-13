@@ -10,7 +10,7 @@ from datetime import datetime
 
 ###################  MAIN TWEET FILE -- EACH LINE IS A JSON OBJECT     ################
 file = open('../../../../Documents/Boulder_Floods/boulder_floods.json', 'r')
-db = MongoClient().mydb.tweets2	#Main Collection
+db = MongoClient().mydb.tweets	#Main Collection
 #######################################################################################
 
 def populate_mongoDB():
