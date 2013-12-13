@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>retweet_hashtags &mdash; Python 0.1 documentation</title>
+    <title>retweet_hashtags &mdash; Python Analysis of Boulder Flooding Twitter Data 0.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,14 +23,14 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Python 0.1 documentation" href="../index.html" />
+    <link rel="top" title="Python Analysis of Boulder Flooding Twitter Data 0.1 documentation" href="../index.html" />
     <link rel="up" title="Module code" href="index.html" /> 
   </head>
   <body>
     <div class="header-wrapper">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">Python 0.1 documentation</a></div>
+          href="../index.html">Python Analysis of Boulder Flooding Twitter Data 0.1 documentation</a></div>
         <div class="rel">
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |
@@ -65,11 +65,16 @@
 <span class="kn">import</span> <span class="nn">re</span>
 
 
+<span class="c">##################################################################################</span>
+<span class="c">####					RELEVANT QUERIES FOR DATASET HERE </span>
+<span class="c">##################################################################################</span>
 
 <span class="n">query</span> <span class="o">=</span> <span class="p">{</span>	<span class="s">&#39;spec&#39;</span><span class="p">:</span>	<span class="p">{</span><span class="s">&#39;text&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;(RT|MT)&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span> <span class="p">},</span><span class="c">#, &#39;geo&#39;: {&#39;$ne&#39;: None }},	#Only Geolocated tweets #For now.</span>
 			<span class="s">&#39;fields&#39;</span><span class="p">:{</span>	<span class="s">&#39;_id&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39;id&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;user.screen_name&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
 						<span class="s">&#39;user.id&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;entities.hashtags&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
 		<span class="p">}</span>
+
+<span class="c">##################################################################################</span>
 
 <div class="viewcode-block" id="retweeted_graph"><a class="viewcode-back" href="../code.html#retweet_hashtags.retweeted_graph">[docs]</a><span class="k">def</span> <span class="nf">retweeted_graph</span><span class="p">(</span><span class="n">tweets_array</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;Returns graph from tweets array returned from mongoDB&quot;&quot;&quot;</span>
@@ -105,6 +110,7 @@
 	<span class="n">degrees</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="s">&#39;weight&#39;</span><span class="p">)</span>
 	<span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">degrees</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 		<span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s">&#39;real_degree&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">degrees</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+		<span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s">&#39;label&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">node</span>
 	
 	<span class="k">print</span> <span class="s">&quot;----DONE----&quot;</span>
 	<span class="k">return</span> <span class="n">g</span>
@@ -136,7 +142,7 @@
 	<span class="k">if</span> <span class="n">show_labels</span><span class="p">:</span>
 		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">txt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
 			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span> <span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
-				<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="p">(</span><span class="n">cc_to_graph</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">tris_to_graph</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+				<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="p">(</span><span class="n">cc_to_graph</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">tris_to_graph</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 
 	<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Number of Triangles vs. Clustering Coefficient&#39;</span><span class="p">)</span>
  	<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;Triangles&quot;</span><span class="p">)</span>
@@ -158,10 +164,11 @@
 		<span class="k">if</span> <span class="n">pruned_graph</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s">&#39;weight&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">800</span><span class="p">:</span>
 			<span class="n">pruned_graph</span><span class="o">.</span><span class="n">remove_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
 
+	<span class="n">f</span><span class="o">.</span><span class="n">print_betweenness_centrality</span><span class="p">(</span><span class="n">pruned_graph</span><span class="p">)</span>
 
 	<span class="n">make_triangle_cc_plot</span><span class="p">(</span><span class="n">pruned_graph</span><span class="p">,</span> <span class="n">show_labels</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-	<span class="n">f</span><span class="o">.</span><span class="n">write_network_gml</span><span class="p">(</span><span class="n">pruned_graph</span><span class="p">,</span> <span class="s">&#39;retweets_hashtag_gt800_real_degree&#39;</span><span class="p">)</span>
+	<span class="c">#f.write_network_gml(pruned_graph, &#39;retweets_hashtag_gt800_real_degree&#39;)</span>
 
 	<span class="c">#f.draw_network_plt(pruned_graph, scale=(.1))	#For quick visualization</span>
 </pre></div>

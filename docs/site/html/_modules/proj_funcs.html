@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>proj_funcs &mdash; Python 0.1 documentation</title>
+    <title>proj_funcs &mdash; Python Analysis of Boulder Flooding Twitter Data 0.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,14 +23,14 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Python 0.1 documentation" href="../index.html" />
+    <link rel="top" title="Python Analysis of Boulder Flooding Twitter Data 0.1 documentation" href="../index.html" />
     <link rel="up" title="Module code" href="index.html" /> 
   </head>
   <body>
     <div class="header-wrapper">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">Python 0.1 documentation</a></div>
+          href="../index.html">Python Analysis of Boulder Flooding Twitter Data 0.1 documentation</a></div>
         <div class="rel">
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |
@@ -128,9 +128,9 @@
 	<span class="k">if</span> <span class="s">&#39;weight&#39;</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 		<span class="n">sizes</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">get_node_attributes</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="s">&#39;weight&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
 		<span class="n">scaled_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">*</span> <span class="n">scale</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sizes</span><span class="p">]</span> 
-	<span class="k">if</span> <span class="n">colors</span> <span class="ow">and</span> <span class="n">weight</span><span class="p">:</span>
+	<span class="k">if</span> <span class="n">colors</span> <span class="ow">and</span> <span class="n">scaled_sizes</span><span class="p">:</span>
 		<span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="n">scaled_sizes</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
-	<span class="k">elif</span> <span class="n">colors</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">weight</span><span class="p">:</span>
+	<span class="k">elif</span> <span class="n">colors</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">scaled_sizes</span><span class="p">:</span>
 		<span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
 	<span class="k">elif</span> <span class="n">scaled_sizes</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">colors</span><span class="p">:</span>
 		<span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="n">scaled_sizes</span><span class="p">)</span>
@@ -176,6 +176,36 @@
 			<span class="n">unreciprocated_links</span><span class="o">+=</span><span class="mi">1</span>
 	<span class="k">return</span> <span class="p">(</span><span class="n">reciprocated_links</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">total_degree</span> <span class="o">-</span> <span class="n">reciprocated_links</span><span class="p">)</span>
 </div>
+<div class="viewcode-block" id="get_graph_reciprocity"><a class="viewcode-back" href="../code.html#proj_funcs.get_graph_reciprocity">[docs]</a><span class="k">def</span> <span class="nf">get_graph_reciprocity</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">weighted</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Compute graph reciprocity: reciprocated links / total links&quot;&quot;&quot;</span>
+	<span class="n">edge_list</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">total_edges</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">edge_list</span><span class="p">)</span> <span class="c">#Must account for the weight of the edges as well.</span>
+	<span class="n">reciprocated_links</span> <span class="o">=</span> <span class="mf">0.0</span>
+	<span class="n">new_list</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="c"># for edge in edge_list:</span>
+	<span class="k">if</span> <span class="n">weighted</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edge_list</span><span class="p">:</span>
+			<span class="k">while</span> <span class="n">edge</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s">&#39;weight&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+			 	<span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>
+			 	<span class="n">edge</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s">&#39;weight&#39;</span><span class="p">]</span><span class="o">-=</span><span class="mi">1</span>
+		<span class="n">edge_list</span> <span class="o">=</span> <span class="n">new_list</span>
+		<span class="n">total_edges</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_list</span><span class="p">)</span>
+	
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edge_list</span><span class="p">:</span>
+			 <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>
+		<span class="n">edge_list</span> <span class="o">=</span> <span class="n">new_list</span>
+		<span class="n">total_edges</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_list</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edge_list</span><span class="p">:</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">in</span> <span class="n">edge_list</span><span class="p">:</span>
+			<span class="n">reciprocated_links</span><span class="o">+=</span><span class="mi">2</span>
+			<span class="n">edge_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span> <span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">)</span>
+	<span class="k">if</span> <span class="n">total_edges</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">reciprocated_links</span> <span class="o">/</span> <span class="n">total_edges</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="mi">0</span>
+</div>
 <div class="viewcode-block" id="get_avg"><a class="viewcode-back" href="../code.html#proj_funcs.get_avg">[docs]</a><span class="k">def</span> <span class="nf">get_avg</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;Simply returns the average of a list&quot;&quot;&quot;</span>
 	<span class="n">avg</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -194,12 +224,57 @@
 	<span class="n">avg_reciprocity</span> <span class="o">=</span> <span class="mf">0.0</span>
 	<span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">degrees</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">degrees</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="n">size</span><span class="p">]:</span>
 		<span class="k">print</span> <span class="n">degrees</span><span class="p">[</span><span class="n">w</span><span class="p">],</span> <span class="s">&quot;&amp;&quot;</span><span class="p">,</span>
-		<span class="n">query</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;spec&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;user.id&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="p">},</span> <span class="s">&#39;fields&#39;</span><span class="p">:{</span><span class="s">&#39;_id&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39;user.screen_name&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span> <span class="p">}</span>
-		<span class="n">this_data</span> <span class="o">=</span> <span class="n">bf</span><span class="o">.</span><span class="n">query_mongo_get_list</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 		<span class="n">reciprocity</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get_reciprocity_of_node</span><span class="p">(</span><span class="n">umg</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
 		<span class="k">print</span> <span class="n">this_data</span><span class="p">[</span><span class="s">&#39;user&#39;</span><span class="p">][</span><span class="s">&#39;screen_name&#39;</span><span class="p">],</span> <span class="s">&quot;</span><span class="se">\\\\</span><span class="s">&quot;</span><span class="c">#,&quot;&amp;&quot;, &quot;{0:.4f}&quot;.format(reciprocity),&quot;\\\\&quot;</span>
 		<span class="n">avg_reciprocity</span><span class="o">+=</span><span class="n">reciprocity</span>
-	<span class="k">print</span> <span class="n">avg_reciprocity</span><span class="o">/</span><span class="n">size</span></div>
+	<span class="k">print</span> <span class="n">avg_reciprocity</span><span class="o">/</span><span class="n">size</span>
+</div>
+<div class="viewcode-block" id="print_betweenness_centrality"><a class="viewcode-back" href="../code.html#proj_funcs.print_betweenness_centrality">[docs]</a><span class="k">def</span> <span class="nf">print_betweenness_centrality</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">amount</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; Prints the betweenness centrality for the top specificed # of nodes.</span>
+<span class="sd">		Uses NetworkX&#39;s betweenness_centrality function.</span>
+<span class="sd">		Depends on having weighted&quot;&quot;&quot;</span>
+	<span class="n">bc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">betweenness_centrality</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s">&#39;weight&#39;</span><span class="p">)</span>
+	<span class="k">print</span> <span class="s">&quot;Top &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; Nodes by Betweenness Centrality:&quot;</span>
+	<span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">bc</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">bc</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="n">amount</span><span class="p">]:</span>
+		<span class="k">print</span> <span class="s">&quot;{:15s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s">&#39;label&#39;</span><span class="p">]),</span> 
+		<span class="k">print</span> <span class="s">&quot;{0:4f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bc</span><span class="p">[</span><span class="n">node</span><span class="p">])</span>
+</div>
+<span class="k">def</span> <span class="nf">print_top_reciprocated_nodes</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">return_graph</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+	<span class="n">recips</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="n">recip_return</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="n">recip_to_graph</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">out_degrees</span><span class="o">=</span><span class="n">graph</span><span class="o">.</span><span class="n">out_degree</span><span class="p">()</span> <span class="c">#Not counting the weight of the edges.</span>
+	<span class="n">out_degree_to_graph</span><span class="o">=</span><span class="p">[]</span> 
+	<span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+		<span class="n">recips</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_reciprocity_of_node</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">recips</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">recips</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="n">count</span><span class="p">]:</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">return_graph</span><span class="p">:</span>
+			<span class="k">print</span> <span class="n">graph</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">w</span><span class="p">][</span><span class="s">&#39;label&#39;</span><span class="p">],</span> <span class="s">&quot;&amp;&quot;</span><span class="p">,</span><span class="s">&quot;{0:4f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">recips</span><span class="p">[</span><span class="n">w</span><span class="p">]),</span> <span class="s">&quot;</span><span class="se">\\\\</span><span class="s">&quot;</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">recip_to_graph</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">recips</span><span class="p">[</span><span class="n">w</span><span class="p">])</span>
+			<span class="n">out_degree_to_graph</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out_degrees</span><span class="p">[</span><span class="n">w</span><span class="p">])</span>
+			<span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">w</span><span class="p">][</span><span class="s">&#39;label&#39;</span><span class="p">])</span>
+	<span class="k">if</span> <span class="n">return_graph</span><span class="p">:</span>
+		<span class="k">return</span> <span class="p">[</span><span class="n">out_degree_to_graph</span><span class="p">,</span> <span class="n">recip_to_graph</span><span class="p">,</span> <span class="n">labels</span><span class="p">]</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="n">test_graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+	<span class="n">test_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">weight</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+	<span class="n">test_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">weight</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+	<span class="n">test_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">weight</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+	<span class="n">test_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">weight</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+	<span class="n">test_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">weight</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+	<span class="n">test_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">weight</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+	<span class="n">test_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">weight</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+	<span class="k">print</span> <span class="n">get_graph_reciprocity</span><span class="p">(</span><span class="n">test_graph</span><span class="p">)</span>
+
+	<span class="n">print_top_reciprocated_nodes</span><span class="p">(</span><span class="n">test_graph</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+	<span class="c">#nx.draw(test_graph)</span>
+	<span class="c">#plt.show()</span>
 </pre></div>
 
           </div>

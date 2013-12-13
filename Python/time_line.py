@@ -67,7 +67,6 @@ def make_plot_return_top(time_steps, time_step='Day', make_plot=True, limit=100,
 	for i in to_graph[0:limit]:
 		top_times.append(sorted_keys[to_graph_original.index(i)])
 		top_dict[top_times[len(top_times)-1]] = i
-		#print top_times[len(top_times)-1], i
 
 	return top_dict
 

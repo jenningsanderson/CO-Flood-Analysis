@@ -1,23 +1,34 @@
-"""Jennings Anderson 2013
-CSCI 5352: Final Project: Boulder Flooding
-
-This module holds functions used in multiple parts of the analysis project."""
+"""This module holds various general functions for the project such as creating graphs.
+"""
 import matplotlib.pyplot as plt
 import networkx as nx
 import datetime
 
-def draw_graph(dict, x_axis=False, y_axis=False, title=False, x_scale=False, y_scale=False, style=False, sort=False, scale=False, name=False, reverse=False, y_lim=False):
-	"""Creates a matploblib graph from a dictionary.  
-	Takes arguments for titles, axis, and scales"""
- 	if not y_axis:  y_axis = 'Y Axis';
- 	if not x_axis:  x_axis = 'X Axis';
- 	if not title:   title  = 'Title';
- 	if not x_scale: x_scale= 'linear';
- 	if not y_scale: y_scale= 'linear'; 
- 	if not style:   style  = 'g-';
- 	if scale:  y_scale=scale;
- 	if scale:  x_scale=scale;
+def draw_graph(dict, **kwargs):
+	"""Creates a matploblib graph from a dictionary.
 
+	|  Will sort the dictionary if requested.
+	|  If name argument is specified, it saves figure instead of showing it.
+	|  Takes arguments for titles, axis, and scales.
+	"""
+	try:
+		y_label = kwargs['y_label']
+	except KeyError:
+		y_label = 'Y Axis'
+		x_label = (kwargs['x_label'] or 'X Axis')
+		title  	= (kwargs['title']   or 'Title')
+		x_scale	= (kwargs['x_scale'] or 'linear')
+		y_scale	= (kwargs['y_scale'] or 'linear')
+		style 	= (kwargs['style'] 	 or 'g-')
+		scale 	= (kwargs['scale']   or 'linear')
+		y_lim 	= False or (kwargs['y_lim'])
+		name 	= False or (kwargs['name'])
+		sort 	= False or (kwargs['sort'])
+		reverse = False or (kwargs['reverse'])
+	except KeyError:
+		pass
+
+ 	#Can I add this comment?
  	y_vals = []
  	for key in dict.keys():
  		y_vals.append(dict[key])
@@ -31,8 +42,8 @@ def draw_graph(dict, x_axis=False, y_axis=False, title=False, x_scale=False, y_s
  	plt.title(title)
  	plt.yscale(y_scale)
  	plt.xscale(x_scale)
- 	plt.ylabel(y_axis)
- 	plt.xlabel(x_axis)
+ 	plt.ylabel(y_label)
+ 	plt.xlabel(x_label)
  	if y_lim:
  		plt.ylim(y_lim)
 
@@ -209,19 +220,5 @@ def print_top_reciprocated_nodes(graph, count=10, reverse=True, return_graph=Fal
 
 
 if __name__ == '__main__':
-	test_graph = nx.DiGraph()
-	test_graph.add_edge(0,1,weight=2)
-	test_graph.add_edge(1,2,weight=4)
-	test_graph.add_edge(2,1,weight=4)
-	test_graph.add_edge(2,0,weight=2)
-	test_graph.add_edge(3,2,weight=2)
-	test_graph.add_edge(3,0,weight=2)
-	test_graph.add_edge(0,3,weight=2)
-
-	print get_graph_reciprocity(test_graph)
-
-	print_top_reciprocated_nodes(test_graph, 4)
-
-	#nx.draw(test_graph)
-	#plt.show()
+	print "Called Proj_Funcs Directly"
 

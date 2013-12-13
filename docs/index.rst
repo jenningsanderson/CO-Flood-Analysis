@@ -1,28 +1,24 @@
-.. Python documentation master file, created by
-   sphinx-quickstart on Tue Dec 10 12:27:48 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Python Documentation for CO Flood Twitter Network Analysis
+sPython Documentation for CO Flood Twitter Network Analysis
 ==========================================================
 
 This is documentation for the code I wrote to analyze the Colorado Flood Twitter data for a final project.
 
-[Return to Github Repo](https://github.com/jenningsanderson/CO-Flood-Analysis/)
+`Return to Github Repo`_.
 
-Contents:
+
+Documentated Modules
+====================
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
    code
 
-
-
-Indices and tables
+Indices and Tables
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
 
+.. _Return to Github Repo: https://github.com/jenningsanderson/CO-Flood-Analysis/

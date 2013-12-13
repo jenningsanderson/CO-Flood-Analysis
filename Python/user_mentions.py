@@ -160,10 +160,10 @@ if __name__ == '__main__':
 	undirected_umg = umg.to_undirected()
 
 	print_top_betweenness(undirected_umg, 10)
-	#f.draw_graph(print_top_betweenness(undirected_umg, 10), 
-		# sort=True, reverse=True, style='ro', scale='log', 
-		# title="Betweenness Centrality of Geo-Tagged User Mentions", 
-		# x_axis="Nodes", y_axis="Betweenness Centrality")
+	f.draw_graph(print_top_betweenness(undirected_umg, 10), 
+		 sort=True, reverse=True, style='ro', scale='log', 
+		 title="Betweenness Centrality of Geo-Tagged User Mentions", 
+		 x_label="Nodes", y_label="Betweenness Centrality")
 
 	#Now we've identified the users that we care about as in_array_query
 	print "Using above list to create new graph, calling all users that tweeted at those users"

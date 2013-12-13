@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>bf_load &mdash; Python 0.1 documentation</title>
+    <title>bf_load &mdash; Python Analysis of Boulder Flooding Twitter Data 0.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,14 +23,14 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Python 0.1 documentation" href="../index.html" />
+    <link rel="top" title="Python Analysis of Boulder Flooding Twitter Data 0.1 documentation" href="../index.html" />
     <link rel="up" title="Module code" href="index.html" /> 
   </head>
   <body>
     <div class="header-wrapper">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">Python 0.1 documentation</a></div>
+          href="../index.html">Python Analysis of Boulder Flooding Twitter Data 0.1 documentation</a></div>
         <div class="rel">
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |
@@ -49,10 +49,7 @@
           <div class="body">
             
   <h1>Source code for bf_load</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;Jennings Anderson 2013</span>
-<span class="sd">CSCI 5352: Final Project: Boulder Flooding Twitter Network Analysis</span>
-
-<span class="sd">This module interfaces with MongoDB and can pickle networkx objects</span>
+<span class="sd">&quot;&quot;&quot;This module interfaces with MongoDB and can pickle networkx objects</span>
 <span class="sd">It is designed to do all of the database i/o for the project&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">json</span>
@@ -67,24 +64,28 @@
 <span class="c">#######################################################################################</span>
 
 <div class="viewcode-block" id="populate_mongoDB"><a class="viewcode-back" href="../code.html#bf_load.populate_mongoDB">[docs]</a><span class="k">def</span> <span class="nf">populate_mongoDB</span><span class="p">():</span>
-	<span class="sd">&#39;&#39;&#39;	Populates the MongoDB by parsing each line of the .json text file as a JSON object.</span>
-<span class="sd">		Takes special care to convert the created_at field&#39;&#39;&#39;</span>
+	<span class="sd">&quot;&quot;&quot;Populates the MongoDB by parsing each line of the .json ile as text fa JSON object.</span>
+<span class="sd">	Takes special care to convert the created_at field&quot;&quot;&quot;</span>
 	<span class="k">global</span> <span class="nb">file</span><span class="p">,</span> <span class="n">db</span>
 	<span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
 	<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">file</span><span class="p">:</span>				<span class="c"># Standard iteration through file</span>
 		<span class="n">tweet</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> 	<span class="c"># Recognize it as a JSON object</span>
-		<span class="n">tweet</span><span class="p">[</span><span class="s">&#39;created_at&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">tweet</span><span class="p">[</span><span class="s">&#39;created_at&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;+0000&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">),</span> <span class="s">&#39;%a %b </span><span class="si">%d</span><span class="s"> %H:%M:%S %Y&#39;</span><span class="p">)</span>
-		<span class="n">db</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">tweet</span><span class="p">)</span>			<span class="c"># Actually insert it into the tweets collection</span>
-		<span class="k">if</span> <span class="n">counter</span> <span class="o">%</span> <span class="mi">10000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>	<span class="c"># Show import update</span>
+		<span class="n">tweet</span><span class="p">[</span><span class="s">&#39;created_at&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">tweet</span><span class="p">[</span><span class="s">&#39;created_at&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;+0000&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">),</span>
+			<span class="s">&#39;%a %b </span><span class="si">%d</span><span class="s"> %H:%M:%S %Y&#39;</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">tweet</span><span class="p">)</span>            <span class="c"># Actually insert it into the tweets collection</span>
+		<span class="k">if</span> <span class="n">counter</span> <span class="o">%</span> <span class="mi">10000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>    <span class="c"># Shows import update status because it can take a while</span>
 			<span class="k">print</span> <span class="n">counter</span><span class="p">,</span>
 		<span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+	<span class="k">print</span> <span class="s">&quot;done&quot;</span>
 </div>
-<div class="viewcode-block" id="query_mongo_get_list"><a class="viewcode-back" href="../code.html#bf_load.query_mongo_get_list">[docs]</a><span class="k">def</span> <span class="nf">query_mongo_get_list</span><span class="p">(</span><span class="n">query</span> <span class="o">=</span> <span class="p">{}</span> <span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>	<span class="c"># Default just returns all</span>
-	<span class="sd">&#39;&#39;&#39;	Returns array of tweets that match query, with fields specified by query.  </span>
-<span class="sd">		Options:</span>
-<span class="sd">			No Limit:  Returns array of all tweets</span>
-<span class="sd">			Limit set: Returns array of size limit</span>
-<span class="sd">			Limit==1:  Returns single tweet, not in array.&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="query_mongo_get_list"><a class="viewcode-back" href="../code.html#bf_load.query_mongo_get_list">[docs]</a><span class="k">def</span> <span class="nf">query_mongo_get_list</span><span class="p">(</span><span class="n">query</span> <span class="o">=</span> <span class="p">{}</span> <span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Returns array of tweet objects that match query, with fields specified by query.  </span>
+
+<span class="sd">	|  Options:</span>
+<span class="sd">	|  No Limit:  Returns array of all tweets</span>
+<span class="sd">	|  Limit set: Returns array of size limit</span>
+<span class="sd">	|  Limit==1:  Returns single tweet, not in array.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">global</span> <span class="n">db</span>
 	<span class="k">if</span> <span class="ow">not</span> <span class="n">limit</span><span class="p">:</span>
 		<span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">query</span><span class="p">[</span><span class="s">&#39;spec&#39;</span><span class="p">],</span> <span class="n">fields</span><span class="o">=</span><span class="n">query</span><span class="p">[</span><span class="s">&#39;fields&#39;</span><span class="p">]))</span>
@@ -93,25 +94,31 @@
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">query</span><span class="p">[</span><span class="s">&#39;spec&#39;</span><span class="p">],</span> <span class="n">fields</span><span class="o">=</span><span class="n">query</span><span class="p">[</span><span class="s">&#39;fields&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">limit</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="pickle_this"><a class="viewcode-back" href="../code.html#bf_load.pickle_this">[docs]</a><span class="k">def</span> <span class="nf">pickle_this</span><span class="p">(</span><span class="n">object_to_pickle</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>	<span class="c">#Deprecated in final version: too slow</span>
-	<span class="sd">&#39;&#39;&#39; Pickles the object passed to it with the name passed and writes to pickle directory.</span>
-<span class="sd">		Not used in final calculations because reading from database is faster than loading</span>
-<span class="sd">		pickled file.&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="pickle_this"><a class="viewcode-back" href="../code.html#bf_load.pickle_this">[docs]</a><span class="k">def</span> <span class="nf">pickle_this</span><span class="p">(</span><span class="n">object_to_pickle</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Pickles the object passed to it with the name passed and writes to pickle directory.</span>
+
+<span class="sd">	|  Rarely implemented because for most graphs it is quicker to make real-time query.</span>
+<span class="sd">	|  If graph requires making many queries, best to pickle the graph once it is made.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">print</span> <span class="s">&quot;Pickling &quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="s">&#39;...&#39;</span><span class="p">,</span>
 	<span class="n">output</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;pickles/&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;.pickle&#39;</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span>
 	<span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">object_to_pickle</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
 	<span class="k">print</span> <span class="s">&quot;done&quot;</span>
 </div>
 <div class="viewcode-block" id="unpickle_this"><a class="viewcode-back" href="../code.html#bf_load.unpickle_this">[docs]</a><span class="k">def</span> <span class="nf">unpickle_this</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>					<span class="c">#Deprecated in final version: too slow</span>
-	<span class="sd">&#39;&#39;&#39; Reads the pickled data from the pickle_this() function.  Not implemented in final</span>
-<span class="sd">		calculations because it is slower than reading from the database.&#39;&#39;&#39;</span>
+	<span class="sd">&quot;&quot;&quot;Reads the pickled data from the *pickle_this()* function.</span>
+
+<span class="sd">	|  Rarely implemented because most graphs do not use the *pickle_this()*</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">print</span> <span class="s">&quot;Unpickling &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;...&quot;</span><span class="p">,</span>
 	<span class="n">this_obj</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">&#39;pickles/&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;.pickle&#39;</span><span class="p">))</span>
 	<span class="k">print</span> <span class="s">&quot;done&quot;</span>
 	<span class="k">return</span> <span class="n">this_obj</span>
 </div>
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>					<span class="c"># If this file is called direclty, then run import</span>
-	<span class="n">populate_mongoDB</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>					<span class="c"># If this file is called direclty, run import</span>
+	<span class="k">print</span> <span class="s">&quot;Running Import...&quot;</span>
+	<span class="c">#populate_mongoDB()						# ONLY RUN ONCE; COMMENTED OUT FOR SAFETY</span>
+	<span class="k">print</span> <span class="s">&quot;done&quot;</span>
 </pre></div>
 
           </div>
