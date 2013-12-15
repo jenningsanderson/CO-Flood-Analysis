@@ -39,6 +39,16 @@ retweets = {    'spec':	{'text': re.compile('(RT|MT)', re.IGNORECASE) },
 					'user.id'               : 1,
 					'entities.hashtags'     : 1} }
 
+not_retweets = {'spec':	{'text': {'$not' : re.compile('(RT|MT)', re.IGNORECASE) } },
+				'fields':{
+					'_id'                   : 0,
+					'id'                    : 1,
+					'user.screen_name'      : 1,
+					'text'                  : 1,
+					'user.id'               : 1,
+					'entities'              : 1} }
+
+
 def get_tweets_between(start, end, debug=False):
 	start += datetime.timedelta(hours=6) # Adjusting for timezone
 	end += datetime.timedelta(hours=6)

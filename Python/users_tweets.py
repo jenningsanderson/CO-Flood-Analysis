@@ -1,8 +1,5 @@
-"""Jennings Anderson 2013
-CSCI 5352: Final Project: Boulder Flooding
-
-This module creates a nodes of all users and tweets, connecting them if
-that user made that tweet.  Multiple users will share tweets if they share keywords."""
+"""This model creates nodes of all users and hashtags, connecting them if
+user tweeted with specific hashtag."""
 
 import bf_load as bf
 import proj_funcs as f
@@ -12,7 +9,6 @@ import matplotlib.pyplot as plt
 #Globals
 users = []
 tags  = []
-
 def create_user_tweet_graph(tweets):
 	"""Return graph based on global query:
 	Nodes: Users, Hashtags (Different types, colors)
@@ -65,7 +61,7 @@ def calculate_lorenz_curve(graph, type, steps=100):
 	for node in graph.nodes():
 		if graph.node[node]['type'] is type:
 			vertices[node] = graph.node[node]['weight']
-			total_weight+=graph.node[node]['weight']
+			total_weight  += graph.node[node]['weight']
 	
 	print 'Total Weight:', total_weight
 
@@ -92,35 +88,57 @@ def calculate_lorenz_curve(graph, type, steps=100):
   	return [x,y]
 
 def investigate_top_tweets(graph):
-	trimmed_graph = f.trim_graph(graph, 'weight', 1000, key='type', value='hashtags')
+	trimmed_graph = f.trim_graph(graph, 'weight', 50000, key='type', value='hashtags')
+	trimmed_graph = f.trim_graph(trimmed_graph, 'weight', 500, key='type', value='user')
 	degrees = trimmed_graph.degree()
 	for node in degrees.keys():
 		if degrees[node] < 1:
 			trimmed_graph.remove_node(node)
+	
 	print len(trimmed_graph.nodes())
 
+	#Normalize the weights for better drawing, now that it's trimmed:
+	total_weights={'user':0, 'hashtag':1}
+	for node in trimmed_graph.nodes():
+		total_weights[trimmed_graph.node[node]['type']]+=trimmed_graph.node[node]['weight']
+	for node in trimmed_graph.nodes():
+		type=trimmed_graph.node[node]['type']
+		total = float(total_weights[type])
+		trimmed_graph.node[node]['normalized_weight'] = trimmed_graph.node[node]['weight'] / total
+		if type is 'user':
+			trimmed_graph.node[node]['normalized_weight'] *= 10000 #Scale for viewing
+		else:
+			trimmed_graph.node[node]['normalized_weight'] *= 1000
+
+	f.write_network_gml(trimmed_graph, 'trimmed-user-tags-hi_threshold')
+	
 ################################# RUN TIME ######################################
 
 if __name__ == '__main__':
-	tweets = bf.query_mongo_get_list(bf.all_tweets)
-	graph = create_user_tweet_graph(tweets)
+	#tweets = bf.query_mongo_get_list(bf.not_retweets)
+	#graph = create_user_tweet_graph(tweets)
 
 	"""Calculate the Lorenz Curves for Users & Hashtags"""
-	# lorenz_hashtags = calculate_lorenz_curve(graph, 'hashtag', steps=100)
-	# lorenz_users = calculate_lorenz_curve(graph, 'user', steps=100)
-	# plt.plot(lorenz_hashtags[0],lorenz_hashtags[1], label="Hashtags")
-	# plt.plot(lorenz_users[0], lorenz_users[1], label="Users")
-	# f.draw_graph(plot=plt, title='Lorenz Curves for Users & Hashtags',
+	#lorenz_hashtags = calculate_lorenz_curve(graph, 'hashtag', steps=100)
+	#lorenz_users = calculate_lorenz_curve(graph, 'user', steps=100)
+	#plt.plot(lorenz_hashtags[0],lorenz_hashtags[1], label="Hashtags")
+	#plt.plot(lorenz_users[0], lorenz_users[1], label="Users")
+	#f.draw_graph(plot=plt, title='Lorenz Curves for Users & Hashtags',
 	# 	y_label='Percent of Tweets', x_label='Percent of Group', y_lim=[0,1], x_lim=[0,1])
 
 
 	"""Investigating the top tweets"""
-	investigate_top_tweets(graph)	
+	#investigate_top_tweets(graph)
 
-
-	
+	"""One Mode Projections"""
 	#tags = nx.bipartite.weighted_projected_graph(graph, tags)
+	#bf.pickle_this(tags, 'one_mode_tags-noretweets')
+	#users = nx.bipartite.weighted_projected_graph(graph, users)
+	#bf.pickle_this(users, 'one_mode_users-noretweets')
+	tags = bf.unpickle_this('one_mode_tags-noretweets')
+	#users = bf.unpickle_this('one_mode_users-noretweets')
 
+	print len(tags.nodes())
 	#f.write_network_gml(tags, 'hashtag-bipartite-graph')
 	
 	#trimmed_users = f.trim_graph(graph,'weight', 10000, key='type', value='hashtags')
