@@ -8,13 +8,15 @@ import bf_load as bf
 import proj_funcs as f
 import networkx as nx
 import matplotlib.pyplot as plt
-								# Syntax for what is returned, true/false
+
+#Globals
 users = []
 tags  = []
+
 def create_user_tweet_graph(tweets):
-	'''Return graph based on global query:
+	"""Return graph based on global query:
 	Nodes: Users, Hashtags (Different types, colors)
-	Edges: Users --> Hashtags if user had tweet containing hashtag'''
+	Edges: Users --> Hashtags if user had tweet containing hashtag"""
 	counter=0
 	graph = nx.Graph()
 	for tweet in tweets:
@@ -23,7 +25,7 @@ def create_user_tweet_graph(tweets):
 		for tag in tweet['entities']['hashtags']:
 			hashtags.append(tag['text'].encode('ascii', 'ignore').lower())
 
-		#Add Users
+		# Add Users	
 		if not graph.has_node(user):
 			graph.add_node(user, {'label':tweet['user']['screen_name'], 'weight':1, 
 				'type': 'user', 'color':'red', 'bipartite':0} )
@@ -40,7 +42,6 @@ def create_user_tweet_graph(tweets):
 			else:
 				graph.node[tag]['weight']+=1
 
-
 			#Add edges
 			if not graph.has_edge(user, tag):
 				graph.add_edge(user, tag, {'weight':1} )
@@ -51,24 +52,76 @@ def create_user_tweet_graph(tweets):
 		if counter%1000==0:
 			print counter,
 
-	degrees = graph.degree(weight='weight')				# Need to get the appropriate weights
+	degrees = graph.degree(weight='weight')  # Need to get the appropriate weights
 	for node in degrees.keys():
 		graph.node[node]['real_degree'] = degrees[node]
 	print "done"
 	return graph
 
+def calculate_lorenz_curve(graph, type, steps=100):
+	"""Calculate the Lorenz curve graph based on the weight of the nodes."""
+	vertices = {}
+	total_weight = 0.0
+	for node in graph.nodes():
+		if graph.node[node]['type'] is type:
+			vertices[node] = graph.node[node]['weight']
+			total_weight+=graph.node[node]['weight']
+	
+	print 'Total Weight:', total_weight
+
+	step_size = len(vertices.keys()) / steps
+	# Now sort vertices by their weights:
+	sorted_vertex_keys = sorted(vertices, key=vertices.get, reverse=True)
+  	
+  	y = [0]*steps
+  	y_index = 0
+  	cum_sum = 0.0
+	for i in range(0, len(sorted_vertex_keys)):
+		cum_sum += (vertices[sorted_vertex_keys[i]] / total_weight)
+  		y[y_index] = cum_sum
+
+  		if i % step_size == 0 and y_index<len(y)-1:
+  			y_index += 1
+  	
+  	x=[]
+  	x_sum=0.0
+  	for i in range(0, steps):
+  		x_sum += (float(step_size)/len(vertices.keys()))
+  		x.append(x_sum)
+
+  	return [x,y]
+
+def investigate_top_tweets(graph):
+	trimmed_graph = f.trim_graph(graph, 'weight', 1000, key='type', value='hashtags')
+	degrees = trimmed_graph.degree()
+	for node in degrees.keys():
+		if degrees[node] < 1:
+			trimmed_graph.remove_node(node)
+	print len(trimmed_graph.nodes())
+
 ################################# RUN TIME ######################################
 
 if __name__ == '__main__':
-	# Query
 	tweets = bf.query_mongo_get_list(bf.all_tweets)
 	graph = create_user_tweet_graph(tweets)
 
-	print "making bipartite..."
-	
-	tags = nx.bipartite.weighted_projected_graph(graph, tags)
+	"""Calculate the Lorenz Curves for Users & Hashtags"""
+	# lorenz_hashtags = calculate_lorenz_curve(graph, 'hashtag', steps=100)
+	# lorenz_users = calculate_lorenz_curve(graph, 'user', steps=100)
+	# plt.plot(lorenz_hashtags[0],lorenz_hashtags[1], label="Hashtags")
+	# plt.plot(lorenz_users[0], lorenz_users[1], label="Users")
+	# f.draw_graph(plot=plt, title='Lorenz Curves for Users & Hashtags',
+	# 	y_label='Percent of Tweets', x_label='Percent of Group', y_lim=[0,1], x_lim=[0,1])
 
-	f.write_network_gml(tags, 'hashtag-bipartite-graph')
+
+	"""Investigating the top tweets"""
+	investigate_top_tweets(graph)	
+
+
+	
+	#tags = nx.bipartite.weighted_projected_graph(graph, tags)
+
+	#f.write_network_gml(tags, 'hashtag-bipartite-graph')
 	
 	#trimmed_users = f.trim_graph(graph,'weight', 10000, key='type', value='hashtags')
 	#print "trimmed", len(trimmed_users)

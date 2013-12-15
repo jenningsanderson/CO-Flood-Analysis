@@ -50,7 +50,7 @@ def get_tweets_between(start, end, debug=False):
 						'id'                : 1, 
 						'user.id'           : 1, 
 						'user.screen_name'  : 1,
-						'entities.user_mentions':1 }	}
+						'entities'          : 1 }	}
 	return query_mongo_get_list(time_query)
 
 def get_all_users_who_interact_with(in_array_users_query):

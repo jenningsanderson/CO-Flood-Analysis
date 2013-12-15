@@ -11,7 +11,7 @@ def ignore_KeyError(dict, key):
 	except (KeyError):
 		return False
 
-def draw_graph(dict=False, x=False, y=False, **kwargs):
+def draw_graph(dict=False, x=False, y=False, plot=False, **kwargs):
 	"""Creates a matploblib graph from a dictionary.
 
 	|  Will sort the dictionary if requested.
@@ -26,6 +26,7 @@ def draw_graph(dict=False, x=False, y=False, **kwargs):
 	style 	= ignore_KeyError(kwargs, 'style') 	 or 'g-'
 	scale 	= False or ignore_KeyError(kwargs, 'scale')
 	y_lim 	= False or ignore_KeyError(kwargs, 'y_lim')
+	x_lim   = False or ignore_KeyError(kwargs, 'x_lim')
 	name 	= False or ignore_KeyError(kwargs, 'name')
 	sort 	= False or ignore_KeyError(kwargs, 'sort')
 	reverse = False or ignore_KeyError(kwargs, 'reverse')
@@ -33,16 +34,18 @@ def draw_graph(dict=False, x=False, y=False, **kwargs):
 	if scale:
 		y_scale = scale
 		x_scale = scale
-	
-	y_vals = y or dict.values()
-	x_vals = x or range(0, len(y_vals))
- 
- 	if sort:
- 		y_vals.sort()
- 	if reverse:
- 		y_vals.reverse()
 
- 	plt.plot(x_vals, y_vals, style)
+ 	if not plot:
+ 		y_vals = y or dict.values()
+		x_vals = x or range(0, len(y_vals))
+ 		plt.plot(x_vals, y, style)
+ 		if sort:
+ 			y_vals.sort()
+ 		if reverse:
+ 			y_vals.reverse()
+ 	else:
+ 		plt = plot
+ 		plt.legend(loc="best")
  	
  	plt.title(title)
  	plt.yscale(y_scale)
@@ -51,6 +54,8 @@ def draw_graph(dict=False, x=False, y=False, **kwargs):
  	plt.xlabel(x_label)
  	if y_lim:
  		plt.ylim(y_lim)
+ 	if x_lim:
+ 		plt.xlim(x_lim)
 
  	if not name:
  		plt.show()

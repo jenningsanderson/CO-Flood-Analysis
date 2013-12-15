@@ -12,7 +12,7 @@ import time_line as t
 import user_mentions as um
 import users_tweets as ut
 
-def hashtag_changes(time_step = 60*60):
+def hashtag_changes(time_step = 60*60*24):
 	"""Attempting to identify changes in the hashtag structure overtime"""
 	ranges = t.get_range()
 	first_tweet = ranges[0]
@@ -27,8 +27,13 @@ def hashtag_changes(time_step = 60*60):
 		index += datetime.timedelta(seconds=time_step)
 		tweets = bf.get_tweets_between(first_tweet, index)
 
-		graph = ut.create_tweets_graph(tweets)
+		#Now make the user tweet graph
+		graph = ut.create_user_tweet_graph(tweets)
 		print "Tweets before", index, ":", len(tweets)
+		to_graph.append(len(nx.connected_components(graph)))
+
+	f.draw_graph(y=to_graph, x_label="Days", y_label="Number of Components",
+		title="Cumulative Connected Components")
 
 if __name__ == '__main__':
 	hashtag_changes()
