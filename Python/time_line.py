@@ -1,7 +1,5 @@
-"""Jennings Anderson 2013
-CSCI 5352: Final Project: Boulder Flooding
-
-This module is for visualizing the timeline of the flooding for temporal analysis."""
+"""This module is for visualizing the timeline of the flooding for temporal analysis.
+"""
 
 import bf_load as bf
 import proj_funcs as f
@@ -10,14 +8,21 @@ import matplotlib.pyplot as plt
 import datetime 
 import copy
 
+def get_range(query = bf.all_tweets):
+	tweets = bf.query_mongo_get_list(query)
+	times = []
+	for tweet in tweets:
+		tweet['created_at'] -= datetime.timedelta(hours=6) #Adjusting for TimeZone
+		times.append(tweet['created_at'])
+	times.sort()
+	return times
+
 def get_data_list(time_step=60, just_count=True, limit=False):
 	'''Returns dictionary:
 		Keys: Time Steps
 		Values: #Tweets in TimeStep'''
-	tweets = bf.query_mongo_get_list(query)
-
+	tweets = bf.query_mongo_get_list(bf.all_tweets)
 	flood_days = {}
-	
 	for tweet in tweets:
 		tweet['created_at'] -= datetime.timedelta(hours=6) #Adjusting for TimeZone
 		this_hour = f.roundTime(tweet['created_at'],roundTo=time_step)
@@ -33,7 +38,9 @@ def get_data_list(time_step=60, just_count=True, limit=False):
 		return flood_days
 
 def make_plot_return_top(time_steps, time_step='Day', make_plot=True, limit=100, reverse=True):
-	'''Create plot from time_steps dictionary'''
+	"""Create plot from time_steps dictionary
+
+	"""
 	to_graph = []
 	sorted_keys = time_steps.keys()
 	sorted_keys.sort()
@@ -66,41 +73,13 @@ def make_plot_return_top(time_steps, time_step='Day', make_plot=True, limit=100,
 
 if __name__ == '__main__':
 
-	minutes = get_data_list(time_step=60, just_count=False)
+	hours = get_data_list(time_step=60*60, just_count=False)
 
-	#for i in minutes.keys()[0:10]:
-	#	print i, len(minutes[i])
-
-	dict = make_plot_return_top(minutes, make_plot=False, limit=15)
+	dict = make_plot_return_top(hours, make_plot=True, limit=15)
 
 	for i in dict.keys()[0:10]:
 		print i, dict[i]
-	vals = dict.values()
-	vals.sort()
-	vals.reverse()
-	print vals 			#Top minutes with these tweets.
-
-	#test_hours = get_data_list(time_step=60*60)
-	#vals = test_hours.values()
-	#vals.sort()
-	#vals.reverse()
-	#print vals
 	
-	#top_ten = make_plot(hours, 'Hour')
-
-	#for i in top_ten:
-	#	print type(i), i
-	#print len(top_ten)
-
-
-
-# Leads from this Graph: Look at the Twitter activity that happened in the hour with the highest
-# activity
-
-# The hours with the most activity:
-
-
-
-
-
+	hours = dict.keys()
+	hours.sort()
 

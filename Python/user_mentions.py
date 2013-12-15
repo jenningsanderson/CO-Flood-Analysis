@@ -10,19 +10,9 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import datetime
 
-in_array_users_query = []
 nodes_array = []
 
-#start = datetime.datetime(2013, 9, 13, 5, 00, 00)
-#end = datetime.datetime(2013, 9, 13, 6, 00, 00)
-
 #Query for getting tweets that mention specific users.
-all_who_interact_with_geo_tagged = {
-'spec': {'$or': [{'user.screen_name':{'$in':in_array_users_query}}, 
-{'entities.user_mentions.screen_name':{'$in':in_array_users_query}}]},	#Only geolocated tweets?
-
-'fields':{	'_id':0, 'id':1, 'user.screen_name': 1, 'text':1,
-						'user.id':1, 'entities.user_mentions':1}}
 
 def user_mentions_graph(tweets_array):
 	'''Creates User Mentions Graph:
@@ -65,25 +55,10 @@ def user_mentions_graph(tweets_array):
 		g.node[node]['label'] = str(user_names[node]).strip('[\'\]')
 		g.node[node]['in_degree'] = in_degree[node]
 		g.node[node]['out_degree'] = out_degree[node]
+		g.node[node]['degree'] = in_degree[node]+out_degree[node]
 	
-	print "----DONE----"	
+	print "----DONE----"
 	return g
-
-def show_component_histogram(components, bins=None, debug=False):
-	hist_list = []
-	for i in components:
-		hist_list.append(len(i))
-	if debug:
-		print hist_list
-	if bins:
-		plt.hist(hist_list, bins=bins, histtype='stepfilled')
-	else:
-		plt.hist(hist_list, histtype='stepfilled')
-	plt.title("Size of Components Histogram - Geo-Tagged")
-	plt.xlabel("Nodes in Component")
-	plt.xscale('log')
-	plt.ylabel("Number of Components")
-	plt.show()
 
 def plot_degree_vs_reciprocity():
 	x,y,labels = f.print_top_reciprocated_nodes(large_component, count=10, return_graph=True)
@@ -108,25 +83,34 @@ def print_top_betweenness(component, size=10):
 
 if __name__ == '__main__':
 	
-	user_mentions = bf.query_mongo_get_list(bf.all_tweets)	#Query defined above
-	print "Tweets found:", len(user_mentions), "Making Graph..."
-	
-	umg = user_mentions_graph(user_mentions)
+	# First, get only geo_tagged_tweets:
+	geo_tagged_user_mentions = bf.query_mongo_get_list(bf.only_geo_tagged)
+	print "Geo_Tagged found:", len(geo_tagged_user_mentions), "Making Graph..."
+	umg_geo = user_mentions_graph(geo_tagged_user_mentions)
+
+	# geo_tagged_plus: All users who interact with geo_tagged users
+	geo_tagged_plus = bf.get_all_users_who_interact_with(umg_geo.nodes())
+	print "Geo_Tagged_Plus found:", len(geo_tagged_plus)
+	umg_geo_plus = user_mentions_graph(geo_tagged_plus)
 
 	print "Number of components:",
-	components = nx.weakly_connected_component_subgraphs(umg)
+	components = nx.weakly_connected_component_subgraphs(umg_geo_plus)
 	print len(components)
 	large_component = components[0]
 	print "Nodes in Giant Component: ",len(large_component.nodes())
 
-	#print '\nreciprocity, weighted:',   f.get_graph_reciprocity(large_component)
-	#print 'reciprocity, unweighted:', f.get_graph_reciprocity(large_component, weighted=False)
+	# #print '\nreciprocity, weighted:',   f.get_graph_reciprocity(large_component)
+	# #print 'reciprocity, unweighted:', f.get_graph_reciprocity(large_component, weighted=False)
 
 	print '\nTop 10 Self loops in giant component:'
-	print_top_self_loops(large_component, size=20)
-	
+	f.print_top_self_loops(large_component, size=10)
 
-	#undirected_umg = umg.to_undirected()
+	trimmed = trim_graph(large_component, 'degree', 100)
+	print len(trimmed.nodes())
+
+	f.draw_network_plt(trimmed, size='degree', scale=1)
+	
+	#undirected_umg = umg_plus.to_undirected()
 
 	#print_top_betweenness(undirected_umg, 10)
 	#f.draw_graph(print_top_betweenness(undirected_umg, 10), 

@@ -1,7 +1,4 @@
-"""Jennings Anderson 2013
-CSCI 5352: Final Project: Boulder Flooding
-
-This module builds hashtag networks based on retweet frequency.
+"""This module builds hashtag networks based on retweet frequency.
 Hashtags are nodes and edges exist between them if they appear in the same tweet.
 This is similar to a word cloud, but shows relation between tweets.
 
@@ -11,23 +8,9 @@ import bf_load as bf
 import proj_funcs as f
 import networkx as nx
 import matplotlib.pyplot as plt
-import re
-
-
-##################################################################################
-####					RELEVANT QUERIES FOR DATASET HERE 
-##################################################################################
-
-query = {	'spec':	{'text': re.compile('(RT|MT)', re.IGNORECASE) },#, 'geo': {'$ne': None }},	#Only Geolocated tweets #For now.
-			'fields':{	'_id':0, 'id':1, 'user.screen_name': 1, 'text':1,
-						'user.id':1, 'entities.hashtags':1}
-		}
-
-
-##################################################################################
 
 def retweeted_graph(tweets_array):
-	"""Returns graph from tweets array returned from mongoDB"""
+	"""Returns retweeted graph from tweets array returned from mongoDB"""
 	g = nx.Graph()
 	counter = 0
 	for tweet in tweets_array:
@@ -40,9 +23,9 @@ def retweeted_graph(tweets_array):
 	 		if not g.has_node(tag):
 	 			g.add_node(tag, {'weight':0})
 	 		else:
-	 			g.node[tag]['weight'] += 1    #The weight is the number of times tag occurs
-	 	
-	 	# Now loop through entities again and grab all pairs of hashtags.
+	 			g.node[tag]['weight'] += 1  # Weight is # times hashtag occurs
+
+		# Now loop through entities again and grab all pairs of hashtags.
 	 	for hashtag1 in tweet['entities']['hashtags']:
 	 		tag1 = hashtag1['text'].encode('ascii', 'ignore').lower()
 	 		for hashtag2 in tweet['entities']['hashtags']:
@@ -67,9 +50,10 @@ def retweeted_graph(tweets_array):
 
 def make_triangle_cc_plot(graph, threshold=100, show_labels=False):
 	"""Create a Plot of #Triangles vs. Clustering Coefficient for each node.
-	Options: 
-		Threshold defines maximum # triangles per node to be included in plot.
-		show_labels (defaults to false) tells matplotlib to show labels or not"""
+	
+	|  Function Options: 
+	|  Threshold: Maximum # triangles per node to be included in plot.
+	|  show_labels (defaults to false): Tells Matplotlib to show labels or not"""
 	tris =  nx.triangles(graph)
 	clustering = nx.clustering(graph, weight='weight')
 	cc_to_graph = []

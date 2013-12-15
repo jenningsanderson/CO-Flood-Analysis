@@ -11,7 +11,7 @@ def ignore_KeyError(dict, key):
 	except (KeyError):
 		return False
 
-def draw_graph(dict, **kwargs):
+def draw_graph(dict=False, x=False, y=False, **kwargs):
 	"""Creates a matploblib graph from a dictionary.
 
 	|  Will sort the dictionary if requested.
@@ -33,16 +33,17 @@ def draw_graph(dict, **kwargs):
 	if scale:
 		y_scale = scale
 		x_scale = scale
-
- 	y_vals = []
- 	for key in dict.keys():
- 		y_vals.append(dict[key])
+	
+	y_vals = y or dict.values()
+	x_vals = x or range(0, len(y_vals))
+ 
  	if sort:
  		y_vals.sort()
  	if reverse:
  		y_vals.reverse()
 
- 	plt.plot(range(0, len(y_vals)), y_vals, style)
+ 	plt.plot(x_vals, y_vals, style)
+ 	
  	plt.title(title)
  	plt.yscale(y_scale)
  	plt.xscale(x_scale)
@@ -81,25 +82,27 @@ def bin_it(dict, histogram=True, type=False, type_dict=False):
 	else:
 		return counts
 
-def draw_network_plt(graph, name=False, scale=100):
+def draw_network_plt(graph, name=False, scale=100, size=False):
 	"""Will create a networkx matplotlib graph.
 	Options: If name is specified, will save with name, otherwise will show plot"""
-	colors	 		= False
-	sizes  			= False
-	scaled_sizes 	= False
+	colors          = False
+	scaled_sizes    = False
+	labels          = {}
+	for node in graph.nodes():
+		labels[node] = graph.node[node]['label']
 	if 'color' in graph.nodes(data=True)[0][1].keys():
 		colors = nx.get_node_attributes(graph, 'color').values()
-	if 'weight' in graph.nodes(data=True)[0][1].keys():
-		sizes = nx.get_node_attributes(graph, 'weight').values()
-		scaled_sizes = [x * scale for x in sizes] 
+	if size:
+		sizes = nx.get_node_attributes(graph, size).values()
+		scaled_sizes = [x * scale for x in sizes]
 	if colors and scaled_sizes:
-		nx.draw(graph, node_size=scaled_sizes, node_color=colors)
+		nx.draw(graph, node_size=scaled_sizes, node_color=colors, labels=labels)
 	elif colors and not scaled_sizes:
-		nx.draw(graph, node_color=colors)
+		nx.draw(graph, node_color=colors, labels=labels)
 	elif scaled_sizes and not colors:
-		nx.draw(graph, node_size=scaled_sizes)
+		nx.draw(graph, node_size=scaled_sizes, labels=labels)
 	else:
-		nx.draw(graph)
+		nx.draw(graph, labels=labels)
 	if not name:
 		plt.show()
 	else:
@@ -177,6 +180,20 @@ def get_avg(list):
 		avg+=i
 	return avg/len(list)
 
+def trim_graph(graph, criteria, limit, key=False, value=False):
+	trim_graph = graph.copy()
+	if key and value:
+		node_types = nx.get_node_attributes(trim_graph, key)
+	for node in trim_graph.nodes():
+		if key and value:
+			if node_types[node] is value and trim_graph.node[node][criteria] < limit:
+				trim_graph.remove_node(node)
+				#print "removed: ", str(node)
+		else:
+			if trim_graph.node[node][criteria] < limit:
+				trim_graph.remove_node(node)
+	return trim_graph
+
 def reciprocity_by_degree(graph, degree_type='in', size=20):
 	"""Returns reciprocity (specified by in/out degree )
 		**Need to compare to reciprocity formula in Networks Text.
@@ -243,6 +260,23 @@ def print_top_self_loops(graph, size=10):
 		for j in self_loop_weights[weight]:
 			print graph.node[j]['label'], comma,
 		print "\\\\"
+
+def show_component_histogram(graph, bins=None, debug=False):
+	components = nx.connected_components(graph)
+	hist_list = []
+	for i in components:
+		hist_list.append(len(i))
+	if debug:
+		print hist_list
+	if bins:
+		plt.hist(hist_list, bins=bins, histtype='stepfilled')
+	else:
+		plt.hist(hist_list, histtype='stepfilled')
+	plt.title("Size of Components Histogram - Geo-Tagged")
+	plt.xlabel("Nodes in Component")
+	plt.xscale('log')
+	plt.ylabel("Number of Components")
+	plt.show()
 
 if __name__ == '__main__':
 	print "Called Proj_Funcs Directly, Nothing to run.  Call from specific module"

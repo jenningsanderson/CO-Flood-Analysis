@@ -9,38 +9,37 @@ import proj_funcs as f
 import networkx as nx
 import matplotlib.pyplot as plt
 								# Syntax for what is returned, true/false
-query = {	'spec': { 'geo' : {'$ne': None} },				# Only Geo-Tagged Tweets; for testing
-			'fields':{	'_id'                   : 0,		# This is the Mongo ID 
-						'id'                    : 1,		# This is the Tweet ID
-						'user.screen_name'      : 1, 		# User Screen name
-						'text'					: 1, 		# We want the text of the tweet
-						'entities.hashtags'		: 1} }		# Hashtags
-
-def create_user_tweet_graph():
+users = []
+tags  = []
+def create_user_tweet_graph(tweets):
 	'''Return graph based on global query:
 	Nodes: Users, Hashtags (Different types, colors)
 	Edges: Users --> Hashtags if user had tweet containing hashtag'''
 	counter=0
-	tweets = bf.query_mongo_get_list(query, limit=25)
 	graph = nx.Graph()
 	for tweet in tweets:
-		user = tweet['user']['screen_name'].encode('ascii', 'ignore')
+		user = tweet['user']['id']
 		hashtags = []
 		for tag in tweet['entities']['hashtags']:
 			hashtags.append(tag['text'].encode('ascii', 'ignore').lower())
 
 		#Add Users
 		if not graph.has_node(user):
-			graph.add_node(user, {'label':user, 'weight':1, 'type': 'user', 'color':'red'} )
+			graph.add_node(user, {'label':tweet['user']['screen_name'], 'weight':1, 
+				'type': 'user', 'color':'red', 'bipartite':0} )
+			users.append(user)
 		else:
 			graph.node[user]['weight']+=1
 
 		for tag in hashtags:
 			# Add Hashtag nodes
 			if not graph.has_node(tag):
-				graph.add_node(tag, {'label':tag, 'weight':1, 'type':'hashtag', 'color':'blue'} )
+				graph.add_node(tag, {'label':tag, 'weight':1, 'type':'hashtag', 
+					'color':'blue','bipartite':1} )
+				tags.append(tag)
 			else:
 				graph.node[tag]['weight']+=1
+
 
 			#Add edges
 			if not graph.has_edge(user, tag):
@@ -55,18 +54,30 @@ def create_user_tweet_graph():
 	degrees = graph.degree(weight='weight')				# Need to get the appropriate weights
 	for node in degrees.keys():
 		graph.node[node]['real_degree'] = degrees[node]
-	
+	print "done"
 	return graph
 
 ################################# RUN TIME ######################################
 
 if __name__ == '__main__':
+	# Query
+	tweets = bf.query_mongo_get_list(bf.all_tweets)
+	graph = create_user_tweet_graph(tweets)
+
+	print "making bipartite..."
 	
-	graph = create_user_tweet_graph()				# This takes 8.7s
-	#graph = bf.unpickle_this('users_and_tweets')	# This takes 11.7 Seconds #
+	tags = nx.bipartite.weighted_projected_graph(graph, tags)
 
+	f.write_network_gml(tags, 'hashtag-bipartite-graph')
+	
+	#trimmed_users = f.trim_graph(graph,'weight', 10000, key='type', value='hashtags')
+	#print "trimmed", len(trimmed_users)
 
-	f.draw_network_plt(graph, scale=100)
+	#f.draw_network_plt(trimmed_users, scale=1)
+
+	#print len(trimmed_users.nodes())
+
+	#f.draw_network_plt(trimmed_users, scale=1)
 	
 	#for node in graph.nodes():
 	#	if graph.node[node]['weight'] < 10:
