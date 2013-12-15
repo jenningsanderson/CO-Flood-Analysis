@@ -9,13 +9,6 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import datetime 
 import copy
-												# Syntax for what is returned, true/false
-query = {	'spec':	 { },						# We want all tweets
-			'fields':{	'_id'                   : 0,		# This is the Mongo ID 
-						'id'                    : 1,		# This is a number
-						'user.screen_name'      : 1, 		# For kicks
-						'user.id'               : 1, 		# User ID
-						'created_at'			: 1} }		# This is a date, may have to adjust zone.
 
 def get_data_list(time_step=60, just_count=True, limit=False):
 	'''Returns dictionary:

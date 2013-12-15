@@ -11,6 +11,24 @@ from datetime import datetime
 file = open('../../../../Documents/Boulder_Floods/boulder_floods.json', 'r')
 db = MongoClient().mydb.tweets	#Main Collection
 #######################################################################################
+##################################   POPULAR QUERIES     ##############################
+only_geo_tagged = {	'spec': {'geo': {'$ne': None }},	#Only geolocated tweets?
+					'fields':{	'_id'			:	0, 
+								'id'			:	1, 
+								'user.screen_name': 1,
+								'text'			:	1,
+								'user.id'		:	1, 
+								'entities.user_mentions':1} }
+all_tweets = {		'spec':	 {},                            # All Tweets, no filters
+					'fields':{	
+						'_id'                   : 0,        # This is the Mongo ID 
+						'id'                    : 1,        # This is a number
+						'user.screen_name'      : 1,        # For the label
+						'user.id'               : 1,        # User ID (node ID)
+						'created_at'			: 1,        # Date Object
+						'entities'				: 1} }      # For User Mentions/Hashtags
+
+#######################################################################################
 
 def populate_mongoDB():
 	"""Populates the MongoDB by parsing each line of the .json ile as text fa JSON object.

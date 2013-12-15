@@ -23,6 +23,7 @@ query = {	'spec':	{'text': re.compile('(RT|MT)', re.IGNORECASE) },#, 'geo': {'$n
 						'user.id':1, 'entities.hashtags':1}
 		}
 
+
 ##################################################################################
 
 def retweeted_graph(tweets_array):

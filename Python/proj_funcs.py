@@ -4,6 +4,13 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import datetime
 
+def ignore_KeyError(dict, key):
+	try:
+		if dict.has_key(key):
+			return dict[key]
+	except (KeyError):
+		return False
+
 def draw_graph(dict, **kwargs):
 	"""Creates a matploblib graph from a dictionary.
 
@@ -11,28 +18,25 @@ def draw_graph(dict, **kwargs):
 	|  If name argument is specified, it saves figure instead of showing it.
 	|  Takes arguments for titles, axis, and scales.
 	"""
-	try:
-		y_label = kwargs['y_label']
-	except KeyError:
-		y_label = 'Y Axis'
-		x_label = (kwargs['x_label'] or 'X Axis')
-		title  	= (kwargs['title']   or 'Title')
-		x_scale	= (kwargs['x_scale'] or 'linear')
-		y_scale	= (kwargs['y_scale'] or 'linear')
-		style 	= (kwargs['style'] 	 or 'g-')
-		scale 	= (kwargs['scale']   or 'linear')
-		y_lim 	= False or (kwargs['y_lim'])
-		name 	= False or (kwargs['name'])
-		sort 	= False or (kwargs['sort'])
-		reverse = False or (kwargs['reverse'])
-	except KeyError:
-		pass
+	y_label = ignore_KeyError(kwargs, 'y_label') or 'Y Axis'
+	x_label = ignore_KeyError(kwargs, 'x_label') or 'X Axis'
+	title  	= ignore_KeyError(kwargs, 'title')   or 'Title'  #Ruby would be much easer...
+	x_scale	= ignore_KeyError(kwargs, 'x_scale') or 'linear'
+	y_scale	= ignore_KeyError(kwargs, 'y_scale') or 'linear'
+	style 	= ignore_KeyError(kwargs, 'style') 	 or 'g-'
+	scale 	= False or ignore_KeyError(kwargs, 'scale')
+	y_lim 	= False or ignore_KeyError(kwargs, 'y_lim')
+	name 	= False or ignore_KeyError(kwargs, 'name')
+	sort 	= False or ignore_KeyError(kwargs, 'sort')
+	reverse = False or ignore_KeyError(kwargs, 'reverse')
 
- 	#Can I add this comment?
+	if scale:
+		y_scale = scale
+		x_scale = scale
+
  	y_vals = []
  	for key in dict.keys():
  		y_vals.append(dict[key])
-
  	if sort:
  		y_vals.sort()
  	if reverse:
@@ -218,7 +222,27 @@ def print_top_reciprocated_nodes(graph, count=10, reverse=True, return_graph=Fal
 	if return_graph:
 		return [out_degree_to_graph, recip_to_graph, labels]
 
+def print_top_self_loops(graph, size=10):
+	self_loop_weights = {}
+	for self_loop in graph.selfloop_edges():
+		weight = graph[self_loop[0]][self_loop[1]]['weight'] # Weight of the self loop
+		if not self_loop_weights.has_key(weight):
+			self_loop_weights[weight] = [self_loop[0]]
+		else:
+			self_loop_weights[weight].append(self_loop[0])
+
+	weights_array = self_loop_weights.keys()
+	weights_array.sort()
+	weights_array.reverse()
+	for weight in weights_array[0:size]:     # Returns top self-looping edges for mentions
+		print weight,"&",
+		if len(self_loop_weights[weight])>1:
+			comma=","
+		else:
+			comma=""
+		for j in self_loop_weights[weight]:
+			print graph.node[j]['label'], comma,
+		print "\\\\"
 
 if __name__ == '__main__':
-	print "Called Proj_Funcs Directly"
-
+	print "Called Proj_Funcs Directly, Nothing to run.  Call from specific module"
