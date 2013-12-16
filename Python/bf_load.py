@@ -111,7 +111,7 @@ def query_mongo_get_list(query = {} , limit=False):
 		return list(db.find(spec=query['spec'], fields=query['fields']).limit(limit))
 
 def pickle_this(object_to_pickle, name):
-	"""Pickles the object passed to it with the name passed and writes to pickle directory.
+	"""Pickles the object passed to it with the name passed and writes to pickle directory
 
 	|  Rarely implemented because for most graphs it is quicker to make real-time query.
 	|  If graph requires making many queries, best to pickle the graph once it is made.

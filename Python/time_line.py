@@ -3,6 +3,7 @@
 
 import bf_load as bf
 import proj_funcs as f
+import temporal_analysis as t
 import networkx as nx
 import matplotlib.pyplot as plt
 import datetime 
@@ -37,7 +38,7 @@ def get_data_list(time_step=60, just_count=True, limit=False):
 	else:
 		return flood_days
 
-def make_plot_return_top(time_steps, time_step='Day', make_plot=True, limit=100, reverse=True):
+def make_plot_return_top(time_steps, make_plot=True, limit=100, reverse=True):
 	"""Create plot from time_steps dictionary
 
 	"""
@@ -49,12 +50,15 @@ def make_plot_return_top(time_steps, time_step='Day', make_plot=True, limit=100,
 		to_graph.append(len(time_steps[key]))
 
 	if make_plot:
-		plt.plot(sorted_keys, to_graph)
+		recips = t.reciprocity_per_time_step(time_step=60*60)
+		plt.plot(sorted_keys, to_graph, label="Tweets")
+		plt.plot(sorted_keys, recips, label = "Reciprocity")
 		locs, labels = plt.xticks()
-		plt.title('Twitter Activity by '+str(time_step)) #Modify this to apply
-		plt.ylabel('Tweets per '+str(time_step))		 #Modify this to apply
+		plt.title('Twitter Activity by Hour') #Modify this to apply
+		plt.ylabel('Tweets per Hour')		 #Modify this to apply
 		plt.xlabel(str(time_step))
 		plt.setp(labels, rotation=90)
+		plt.legend(loc="Best")
 		plt.show()
 
 	to_graph_original = copy.deepcopy(to_graph)
@@ -72,14 +76,7 @@ def make_plot_return_top(time_steps, time_step='Day', make_plot=True, limit=100,
 
 
 if __name__ == '__main__':
-
 	hours = get_data_list(time_step=60*60, just_count=False)
-
 	dict = make_plot_return_top(hours, make_plot=True, limit=15)
 
-	for i in dict.keys()[0:10]:
-		print i, dict[i]
-	
-	hours = dict.keys()
-	hours.sort()
 

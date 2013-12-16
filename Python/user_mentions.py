@@ -10,10 +10,6 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import datetime
 
-nodes_array = []
-
-#Query for getting tweets that mention specific users.
-
 def user_mentions_graph(tweets_array):
 	'''Creates User Mentions Graph:
 		Nodes: Users
@@ -77,80 +73,73 @@ def print_top_betweenness(component, size=10):
 		query = {'spec': {'user.id': int(node) }, 'fields':{'_id':0,'user.screen_name': 1} }
 		this_data = bf.query_mongo_get_list(query, limit=1)
 		print this_data['user']['screen_name'],'&', "{0:.4f}".format(bc[node]), '\\\\'
-		in_array_users_query.append(this_data['user']['screen_name'])
-		nodes_array.append(node)
 	return bc
 
 if __name__ == '__main__':
-	
-	# First, get only geo_tagged_tweets:
+	"""First, get only geo_tagged_tweets"""
 	geo_tagged_user_mentions = bf.query_mongo_get_list(bf.only_geo_tagged)
 	print "Geo_Tagged found:", len(geo_tagged_user_mentions), "Making Graph..."
 	umg_geo = user_mentions_graph(geo_tagged_user_mentions)
+	print 'Users',len(umg_geo.nodes())
+	# connected_components = nx.weakly_connected_component_subgraphs(umg_geo)
+	# print "Number of Connected Components:", len(connected_components)
+	# for subgraph in connected_components[0:5]:
+	# 	print "Component has", len(subgraph.nodes())
+	# #f.draw_network_plt(connected_components[1])
+	print '\nreciprocity, weighted:',   f.get_graph_reciprocity(umg_geo)
+	print 'reciprocity, unweighted:', f.get_graph_reciprocity(umg_geo, weighted=False)
+	#print f.reciprocity_by_degree(umg_geo, 'in')
 
-	# geo_tagged_plus: All users who interact with geo_tagged users
+	print "self loops:"
+	f.print_top_self_loops(umg_geo, size=10)
+
+
+	"""geo_tagged_plus: All users who interact with geo_tagged users"""
 	geo_tagged_plus = bf.get_all_users_who_interact_with(umg_geo.nodes())
 	print "Geo_Tagged_Plus found:", len(geo_tagged_plus)
 	umg_geo_plus = user_mentions_graph(geo_tagged_plus)
+	print 'Users:',len(umg_geo_plus.nodes())
 
-	print "Number of components:",
-	components = nx.weakly_connected_component_subgraphs(umg_geo_plus)
-	print len(components)
-	large_component = components[0]
-	print "Nodes in Giant Component: ",len(large_component.nodes())
+	f.print_top_self_loops(umg_geo_plus, size=10)
+	#print '\nreciprocity, weighted:',   f.get_graph_reciprocity(umg_geo_plus)
+	#print 'reciprocity, unweighted:', f.get_graph_reciprocity(umg_geo_plus, weighted=False)
 
-	# #print '\nreciprocity, weighted:',   f.get_graph_reciprocity(large_component)
-	# #print 'reciprocity, unweighted:', f.get_graph_reciprocity(large_component, weighted=False)
+	#f.print_top_reciprocated_nodes(umg_geo_plus, count=20, reverse=True, return_graph=False)
+	#f.print_betweenness_centrality(umg_geo_plus, amount=10)
 
-	print '\nTop 10 Self loops in giant component:'
-	f.print_top_self_loops(large_component, size=10)
 
-	trimmed = trim_graph(large_component, 'degree', 100)
-	print len(trimmed.nodes())
+	"""The entire network without retweets"""
+	#user_mentions_no_retweets = bf.query_mongo_get_list(bf.not_retweets)
+	#print "Tweets found:", len(user_mentions_all), "Making Graph..."
+	#umg_all = user_mentions_graph(user_mentions_all)
 
-	f.draw_network_plt(trimmed, size='degree', scale=1)
+	
+	#to_draw = f.trim_graph(umg_all,'degree',100)
+	#print len(to_draw.nodes())
+
+
+	# print "Number of components:",
+	# components = nx.weakly_connected_component_subgraphs(umg_geo_plus)
+	# print len(components)
+	# large_component = components[1]
+	# print "Nodes in Giant Component: ",len(large_component.nodes())
+
+	# print '\nTop 10 Self loops in giant component:'
+	# f.print_top_self_loops(large_component, size=10)
+
+	# trimmed = f.trim_graph(large_component, 'degree', 100)
+	# print len(trimmed.nodes())
+
+	# f.draw_network_plt(trimmed, size='degree', scale=1)
 	
 	#undirected_umg = umg_plus.to_undirected()
-
-	#print_top_betweenness(undirected_umg, 10)
-	#f.draw_graph(print_top_betweenness(undirected_umg, 10), 
-		 # sort=True, reverse=True, style='r-', scale='log', 
-		 # title="Betweenness Centrality of Geo-Tagged User Mentions", 
-		 # x_label="Blah", y_label="Betweenness Centrality")
-
-	#Now we've identified the users that we care about as in_array_query
-	#print "Using above list to create new graph, calling all users that tweeted at those users"
-	#user_mentions2 = bf.query_mongo_get_list(query2)	#Query defined above
-	#print "Tweets found:", len(user_mentions2), "Making Graph..."
-	
-	#umg2 = user_mentions_graph(user_mentions2)
-
-	#print "Number of components:",
-	#components = nx.weakly_connected_component_subgraphs(umg2)
-	#print len(components)
-	#large_component = components[0]
-	#print "Nodes in Giant Component: ",len(large_component.nodes())
-
-	#print f.get_graph_reciprocity(large_component)
-	#print f.get_graph_reciprocity(large_component, weighted=False)
-	# for i in range(0, len(nodes_array)):
-	# 	print in_array_users_query[i], "&", "{0:.4f}".format( f.get_reciprocity_of_node(umg2, nodes_array[i]) ), "\\\\"
-	
-
-	#f.write_network_gml(umg2, 'users-mentioning-geo-tagged-users-digraph')
-
-	#For Geo-tagged:
-	#show_component_histogram(components, bins=(0,1,2,3,4,5,6,7,10,13,500,600))
 	
 	#f.print_top_reciprocated_nodes(large_component, count=10)
 	
 	#f.write_network_gml(umg, 'geo-tagged-user-mentiones-graph')
-	# bc = nx.betweenness_centrality(umg, normalized=True)
+	#bc = nx.betweenness_centrality(umg, normalized=True)
 	#draw_graph(bc, sort=True, style="ro" )
-
 
 	# This is not that interesting, but it's here:
 	#dc = nx.degree_centrality(large_component)
 	#f.draw_graph(dc, sort=True, style="r-", reverse=True, y_axis="Degree Centrality", x_axis="Number of Nodes")
-
-

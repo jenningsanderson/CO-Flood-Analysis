@@ -67,7 +67,7 @@ def bin_it(dict, histogram=True, type=False, type_dict=False):
 	"""Converts data to counts for easy histogram-like viewing"""
 	counts = {}
 	hist   = {}
-	for key in dict.keys():					#Typically, keys are nodes; but it works for all...
+	for key in dict.keys():			#Typically, keys are nodes; but it works for all...
 		if type and type_dict[key]==type:
 			if counts.has_key(dict[key]):
 				counts[dict[key]].append(key)
@@ -111,7 +111,7 @@ def draw_network_plt(graph, name=False, scale=100, size=False):
 	if not name:
 		plt.show()
 	else:
-		plt.savefig('../Images/'+str(name)+'.png') # TODO: Make it save this graph to a directory.
+		plt.savefig('../Images/'+str(name)+'.png')
 	plt.clf()
 
 def write_network_gml(graph, name):
@@ -201,7 +201,6 @@ def trim_graph(graph, criteria, limit, key=False, value=False):
 
 def reciprocity_by_degree(graph, degree_type='in', size=20):
 	"""Returns reciprocity (specified by in/out degree )
-		**Need to compare to reciprocity formula in Networks Text.
 		Formatted for LaTeX table output."""
 	if degree_type is 'in':
 		degrees = graph.in_degree()
@@ -210,8 +209,8 @@ def reciprocity_by_degree(graph, degree_type='in', size=20):
 	avg_reciprocity = 0.0
 	for w in sorted(degrees, key=degrees.get, reverse=True)[0:size]:
 		print degrees[w], "&",
-		reciprocity = f.get_reciprocity_of_node(umg, int(w))
-		print this_data['user']['screen_name'], "\\\\"#,"&", "{0:.4f}".format(reciprocity),"\\\\"
+		reciprocity = get_reciprocity_of_node(graph, int(w))
+		print graph.node[w]['label'],"&", "{0:.9f}".format(reciprocity),"\\\\"
 		avg_reciprocity+=reciprocity
 	print avg_reciprocity/size
 
@@ -252,7 +251,6 @@ def print_top_self_loops(graph, size=10):
 			self_loop_weights[weight] = [self_loop[0]]
 		else:
 			self_loop_weights[weight].append(self_loop[0])
-
 	weights_array = self_loop_weights.keys()
 	weights_array.sort()
 	weights_array.reverse()

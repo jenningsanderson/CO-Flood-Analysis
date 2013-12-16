@@ -135,7 +135,7 @@ if __name__ == '__main__':
 	#bf.pickle_this(tags, 'one_mode_tags-noretweets')
 	#users = nx.bipartite.weighted_projected_graph(graph, users)
 	#bf.pickle_this(users, 'one_mode_users-noretweets')
-	tags = bf.unpickle_this('one_mode_tags-noretweets')
+	#tags = bf.unpickle_this('one_mode_tags-noretweets')
 	#users = bf.unpickle_this('one_mode_users-noretweets')
 
 	print len(tags.nodes())
