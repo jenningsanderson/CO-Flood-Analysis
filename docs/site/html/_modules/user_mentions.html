@@ -61,31 +61,6 @@
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 
-<span class="n">in_array_users_query</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">nodes_array</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="c">#start = datetime.datetime(2013, 9, 13, 5, 00, 00)</span>
-<span class="c">#end = datetime.datetime(2013, 9, 13, 6, 00, 00)</span>
-
-<span class="c"># query = {	&#39;spec&#39;:	{&#39;created_at&#39;: {&#39;$gt&#39;: start, &#39;$lt&#39;: end } },</span>
-<span class="c"># 			&#39;fields&#39;:{	&#39;_id&#39;		:0, </span>
-<span class="c"># 						&#39;id&#39;		:1, </span>
-<span class="c"># 						&#39;user.screen_name&#39;: 1, </span>
-<span class="c"># 						&#39;text&#39;		:1,</span>
-<span class="c"># 						&#39;user.id&#39;	:1, </span>
-<span class="c"># 						&#39;entities.user_mentions&#39;:1 }	}</span>
-
-<span class="n">query</span> <span class="o">=</span> <span class="p">{</span>	<span class="s">&#39;spec&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;geo&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;$ne&#39;</span><span class="p">:</span> <span class="bp">None</span> <span class="p">}},</span>	<span class="c">#Only geolocated tweets?</span>
-			<span class="s">&#39;fields&#39;</span><span class="p">:{</span>	<span class="s">&#39;_id&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39;id&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;user.screen_name&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
-						<span class="s">&#39;user.id&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;entities.user_mentions&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
-		<span class="p">}</span>
-
-<span class="c">#Query for getting tweets that mention specific users.</span>
-<span class="n">query2</span> <span class="o">=</span> <span class="p">{</span>	<span class="s">&#39;spec&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;$or&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s">&#39;user.screen_name&#39;</span><span class="p">:{</span><span class="s">&#39;$in&#39;</span><span class="p">:</span><span class="n">in_array_users_query</span><span class="p">}},</span> <span class="p">{</span><span class="s">&#39;entities.user_mentions.screen_name&#39;</span><span class="p">:{</span><span class="s">&#39;$in&#39;</span><span class="p">:</span><span class="n">in_array_users_query</span><span class="p">}}]},</span>	<span class="c">#Only geolocated tweets?</span>
-			<span class="s">&#39;fields&#39;</span><span class="p">:{</span>	<span class="s">&#39;_id&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39;id&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;user.screen_name&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
-						<span class="s">&#39;user.id&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;entities.user_mentions&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
-		<span class="p">}</span>
-
 <div class="viewcode-block" id="user_mentions_graph"><a class="viewcode-back" href="../code.html#user_mentions.user_mentions_graph">[docs]</a><span class="k">def</span> <span class="nf">user_mentions_graph</span><span class="p">(</span><span class="n">tweets_array</span><span class="p">):</span>
 	<span class="sd">&#39;&#39;&#39;Creates User Mentions Graph:</span>
 <span class="sd">		Nodes: Users</span>
@@ -127,26 +102,11 @@
 		<span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">user_names</span><span class="p">[</span><span class="n">node</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;[</span><span class="se">\&#39;</span><span class="s">\]&#39;</span><span class="p">)</span>
 		<span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s">&#39;in_degree&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">in_degree</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
 		<span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s">&#39;out_degree&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">out_degree</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+		<span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s">&#39;degree&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">in_degree</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">+</span><span class="n">out_degree</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
 	
-	<span class="k">print</span> <span class="s">&quot;----DONE----&quot;</span>	
+	<span class="k">print</span> <span class="s">&quot;----DONE----&quot;</span>
 	<span class="k">return</span> <span class="n">g</span>
 </div>
-<span class="k">def</span> <span class="nf">show_component_histogram</span><span class="p">(</span><span class="n">components</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-	<span class="n">hist_list</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">components</span><span class="p">:</span>
-		<span class="n">hist_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-	<span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
-		<span class="k">print</span> <span class="n">hist_list</span>
-	<span class="k">if</span> <span class="n">bins</span><span class="p">:</span>
-		<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">hist_list</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s">&#39;stepfilled&#39;</span><span class="p">)</span>
-	<span class="k">else</span><span class="p">:</span>
-		<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">hist_list</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s">&#39;stepfilled&#39;</span><span class="p">)</span>
-	<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Size of Components Histogram - Geo-Tagged&quot;</span><span class="p">)</span>
-	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;Nodes in Component&quot;</span><span class="p">)</span>
-	<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s">&#39;log&#39;</span><span class="p">)</span>
-	<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;Number of Components&quot;</span><span class="p">)</span>
-	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
 <span class="k">def</span> <span class="nf">plot_degree_vs_reciprocity</span><span class="p">():</span>
 	<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">labels</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">print_top_reciprocated_nodes</span><span class="p">(</span><span class="n">large_component</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_graph</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 	<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
@@ -164,88 +124,72 @@
 		<span class="n">query</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;spec&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;user.id&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="p">},</span> <span class="s">&#39;fields&#39;</span><span class="p">:{</span><span class="s">&#39;_id&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#39;user.screen_name&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span> <span class="p">}</span>
 		<span class="n">this_data</span> <span class="o">=</span> <span class="n">bf</span><span class="o">.</span><span class="n">query_mongo_get_list</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 		<span class="k">print</span> <span class="n">this_data</span><span class="p">[</span><span class="s">&#39;user&#39;</span><span class="p">][</span><span class="s">&#39;screen_name&#39;</span><span class="p">],</span><span class="s">&#39;&amp;&#39;</span><span class="p">,</span> <span class="s">&quot;{0:.4f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bc</span><span class="p">[</span><span class="n">node</span><span class="p">]),</span> <span class="s">&#39;</span><span class="se">\\\\</span><span class="s">&#39;</span>
-		<span class="n">in_array_users_query</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_data</span><span class="p">[</span><span class="s">&#39;user&#39;</span><span class="p">][</span><span class="s">&#39;screen_name&#39;</span><span class="p">])</span>
-		<span class="n">nodes_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">bc</span>
 
-<span class="k">def</span> <span class="nf">find_self_loops</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
-	<span class="n">self_loop_weights</span> <span class="o">=</span> <span class="p">{}</span>
-	<span class="k">for</span> <span class="n">self_loop</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">selfloop_edges</span><span class="p">():</span>
-		<span class="n">weight</span> <span class="o">=</span> <span class="n">graph</span><span class="p">[</span><span class="n">self_loop</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">self_loop</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="s">&#39;weight&#39;</span><span class="p">]</span>
-		<span class="k">if</span> <span class="ow">not</span> <span class="n">self_loop_weights</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">weight</span><span class="p">):</span>
-			<span class="n">self_loop_weights</span><span class="p">[</span><span class="n">weight</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">self_loop</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="n">self_loop_weights</span><span class="p">[</span><span class="n">weight</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">self_loop</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-	<span class="n">weights_array</span> <span class="o">=</span> <span class="n">self_loop_weights</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-	<span class="n">weights_array</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-	<span class="n">weights_array</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
-	<span class="k">for</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">weights_array</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">15</span><span class="p">]:</span>
-		<span class="k">print</span> <span class="n">weight</span><span class="p">,</span><span class="s">&quot;&amp;&quot;</span><span class="p">,</span>
-		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">self_loop_weights</span><span class="p">[</span><span class="n">weight</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
-			<span class="n">comma</span><span class="o">=</span><span class="s">&quot;,&quot;</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="n">comma</span><span class="o">=</span><span class="s">&quot;&quot;</span>
-		<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">self_loop_weights</span><span class="p">[</span><span class="n">weight</span><span class="p">]:</span>
-			<span class="n">query</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;spec&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;user.id&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="p">},</span> <span class="s">&#39;fields&#39;</span><span class="p">:{</span><span class="s">&#39;_id&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39;user.screen_name&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span> <span class="p">}</span>
-			<span class="n">this_data</span> <span class="o">=</span> <span class="n">bf</span><span class="o">.</span><span class="n">query_mongo_get_list</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-			<span class="k">print</span> <span class="n">this_data</span><span class="p">[</span><span class="s">&#39;user&#39;</span><span class="p">][</span><span class="s">&#39;screen_name&#39;</span><span class="p">],</span> <span class="n">comma</span><span class="p">,</span> 
-		<span class="k">print</span> <span class="s">&quot;</span><span class="se">\\\\</span><span class="s">&quot;</span>
-
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;First, get only geo_tagged_tweets&quot;&quot;&quot;</span>
+	<span class="n">geo_tagged_user_mentions</span> <span class="o">=</span> <span class="n">bf</span><span class="o">.</span><span class="n">query_mongo_get_list</span><span class="p">(</span><span class="n">bf</span><span class="o">.</span><span class="n">only_geo_tagged</span><span class="p">)</span>
+	<span class="k">print</span> <span class="s">&quot;Geo_Tagged found:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">geo_tagged_user_mentions</span><span class="p">),</span> <span class="s">&quot;Making Graph...&quot;</span>
+	<span class="n">umg_geo</span> <span class="o">=</span> <span class="n">user_mentions_graph</span><span class="p">(</span><span class="n">geo_tagged_user_mentions</span><span class="p">)</span>
+	<span class="k">print</span> <span class="s">&#39;Users&#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">umg_geo</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
+	<span class="c"># connected_components = nx.weakly_connected_component_subgraphs(umg_geo)</span>
+	<span class="c"># print &quot;Number of Connected Components:&quot;, len(connected_components)</span>
+	<span class="c"># for subgraph in connected_components[0:5]:</span>
+	<span class="c"># 	print &quot;Component has&quot;, len(subgraph.nodes())</span>
+	<span class="c"># #f.draw_network_plt(connected_components[1])</span>
+	<span class="k">print</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">reciprocity, weighted:&#39;</span><span class="p">,</span>   <span class="n">f</span><span class="o">.</span><span class="n">get_graph_reciprocity</span><span class="p">(</span><span class="n">umg_geo</span><span class="p">)</span>
+	<span class="k">print</span> <span class="s">&#39;reciprocity, unweighted:&#39;</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">get_graph_reciprocity</span><span class="p">(</span><span class="n">umg_geo</span><span class="p">,</span> <span class="n">weighted</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+	<span class="c">#print f.reciprocity_by_degree(umg_geo, &#39;in&#39;)</span>
+
+	<span class="k">print</span> <span class="s">&quot;self loops:&quot;</span>
+	<span class="n">f</span><span class="o">.</span><span class="n">print_top_self_loops</span><span class="p">(</span><span class="n">umg_geo</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+
+	<span class="sd">&quot;&quot;&quot;geo_tagged_plus: All users who interact with geo_tagged users&quot;&quot;&quot;</span>
+	<span class="n">geo_tagged_plus</span> <span class="o">=</span> <span class="n">bf</span><span class="o">.</span><span class="n">get_all_users_who_interact_with</span><span class="p">(</span><span class="n">umg_geo</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
+	<span class="k">print</span> <span class="s">&quot;Geo_Tagged_Plus found:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">geo_tagged_plus</span><span class="p">)</span>
+	<span class="n">umg_geo_plus</span> <span class="o">=</span> <span class="n">user_mentions_graph</span><span class="p">(</span><span class="n">geo_tagged_plus</span><span class="p">)</span>
+	<span class="k">print</span> <span class="s">&#39;Users:&#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">umg_geo_plus</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
+
+	<span class="n">f</span><span class="o">.</span><span class="n">print_top_self_loops</span><span class="p">(</span><span class="n">umg_geo_plus</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+	<span class="c">#print &#39;\nreciprocity, weighted:&#39;,   f.get_graph_reciprocity(umg_geo_plus)</span>
+	<span class="c">#print &#39;reciprocity, unweighted:&#39;, f.get_graph_reciprocity(umg_geo_plus, weighted=False)</span>
+
+	<span class="c">#f.print_top_reciprocated_nodes(umg_geo_plus, count=20, reverse=True, return_graph=False)</span>
+	<span class="c">#f.print_betweenness_centrality(umg_geo_plus, amount=10)</span>
+
+
+	<span class="sd">&quot;&quot;&quot;The entire network without retweets&quot;&quot;&quot;</span>
+	<span class="c">#user_mentions_no_retweets = bf.query_mongo_get_list(bf.not_retweets)</span>
+	<span class="c">#print &quot;Tweets found:&quot;, len(user_mentions_all), &quot;Making Graph...&quot;</span>
+	<span class="c">#umg_all = user_mentions_graph(user_mentions_all)</span>
+
 	
-	<span class="n">user_mentions</span> <span class="o">=</span> <span class="n">bf</span><span class="o">.</span><span class="n">query_mongo_get_list</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>	<span class="c">#Query defined above</span>
-	<span class="k">print</span> <span class="s">&quot;Tweets found:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_mentions</span><span class="p">),</span> <span class="s">&quot;Making Graph...&quot;</span>	
+	<span class="c">#to_draw = f.trim_graph(umg_all,&#39;degree&#39;,100)</span>
+	<span class="c">#print len(to_draw.nodes())</span>
+
+
+	<span class="c"># print &quot;Number of components:&quot;,</span>
+	<span class="c"># components = nx.weakly_connected_component_subgraphs(umg_geo_plus)</span>
+	<span class="c"># print len(components)</span>
+	<span class="c"># large_component = components[1]</span>
+	<span class="c"># print &quot;Nodes in Giant Component: &quot;,len(large_component.nodes())</span>
+
+	<span class="c"># print &#39;\nTop 10 Self loops in giant component:&#39;</span>
+	<span class="c"># f.print_top_self_loops(large_component, size=10)</span>
+
+	<span class="c"># trimmed = f.trim_graph(large_component, &#39;degree&#39;, 100)</span>
+	<span class="c"># print len(trimmed.nodes())</span>
+
+	<span class="c"># f.draw_network_plt(trimmed, size=&#39;degree&#39;, scale=1)</span>
 	
-	<span class="n">umg</span> <span class="o">=</span> <span class="n">user_mentions_graph</span><span class="p">(</span><span class="n">user_mentions</span><span class="p">)</span>
-
-	<span class="k">print</span> <span class="s">&quot;Number of components:&quot;</span><span class="p">,</span>
-	<span class="n">components</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">weakly_connected_component_subgraphs</span><span class="p">(</span><span class="n">umg</span><span class="p">)</span>
-	<span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">components</span><span class="p">)</span>
-	<span class="n">large_component</span> <span class="o">=</span> <span class="n">components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-	<span class="k">print</span> <span class="s">&quot;Nodes in Giant Component: &quot;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">large_component</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
-
-	<span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">get_graph_reciprocity</span><span class="p">(</span><span class="n">large_component</span><span class="p">)</span>
-	<span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">get_graph_reciprocity</span><span class="p">(</span><span class="n">large_component</span><span class="p">,</span> <span class="n">weighted</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-
-	<span class="n">undirected_umg</span> <span class="o">=</span> <span class="n">umg</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
-
-	<span class="n">print_top_betweenness</span><span class="p">(</span><span class="n">undirected_umg</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-	<span class="c">#f.draw_graph(print_top_betweenness(undirected_umg, 10), </span>
-		<span class="c"># sort=True, reverse=True, style=&#39;ro&#39;, scale=&#39;log&#39;, </span>
-		<span class="c"># title=&quot;Betweenness Centrality of Geo-Tagged User Mentions&quot;, </span>
-		<span class="c"># x_axis=&quot;Nodes&quot;, y_axis=&quot;Betweenness Centrality&quot;)</span>
-
-	<span class="c">#Now we&#39;ve identified the users that we care about as in_array_query</span>
-	<span class="k">print</span> <span class="s">&quot;Using above list to create new graph, calling all users that tweeted at those users&quot;</span>
-	<span class="n">user_mentions2</span> <span class="o">=</span> <span class="n">bf</span><span class="o">.</span><span class="n">query_mongo_get_list</span><span class="p">(</span><span class="n">query2</span><span class="p">)</span>	<span class="c">#Query defined above</span>
-	<span class="k">print</span> <span class="s">&quot;Tweets found:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_mentions2</span><span class="p">),</span> <span class="s">&quot;Making Graph...&quot;</span>
-	
-	<span class="n">umg2</span> <span class="o">=</span> <span class="n">user_mentions_graph</span><span class="p">(</span><span class="n">user_mentions2</span><span class="p">)</span>
-
-	<span class="k">print</span> <span class="s">&quot;Number of components:&quot;</span><span class="p">,</span>
-	<span class="n">components</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">weakly_connected_component_subgraphs</span><span class="p">(</span><span class="n">umg2</span><span class="p">)</span>
-	<span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">components</span><span class="p">)</span>
-	<span class="n">large_component</span> <span class="o">=</span> <span class="n">components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-	<span class="k">print</span> <span class="s">&quot;Nodes in Giant Component: &quot;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">large_component</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
-
-	<span class="c">#print f.get_graph_reciprocity(large_component)</span>
-	<span class="c">#print f.get_graph_reciprocity(large_component, weighted=False)</span>
-	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodes_array</span><span class="p">)):</span>
-		<span class="k">print</span> <span class="n">in_array_users_query</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s">&quot;&amp;&quot;</span><span class="p">,</span> <span class="s">&quot;{0:.4f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">f</span><span class="o">.</span><span class="n">get_reciprocity_of_node</span><span class="p">(</span><span class="n">umg2</span><span class="p">,</span> <span class="n">nodes_array</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="p">),</span> <span class="s">&quot;</span><span class="se">\\\\</span><span class="s">&quot;</span>
-	
-
-	<span class="c">#f.write_network_gml(umg2, &#39;users-mentioning-geo-tagged-users-digraph&#39;)</span>
-
-	<span class="c">#For Geo-tagged:</span>
-	<span class="c">#show_component_histogram(components, bins=(0,1,2,3,4,5,6,7,10,13,500,600))</span>
+	<span class="c">#undirected_umg = umg_plus.to_undirected()</span>
 	
 	<span class="c">#f.print_top_reciprocated_nodes(large_component, count=10)</span>
 	
 	<span class="c">#f.write_network_gml(umg, &#39;geo-tagged-user-mentiones-graph&#39;)</span>
-	<span class="c"># bc = nx.betweenness_centrality(umg, normalized=True)</span>
+	<span class="c">#bc = nx.betweenness_centrality(umg, normalized=True)</span>
 	<span class="c">#draw_graph(bc, sort=True, style=&quot;ro&quot; )</span>
-
 
 	<span class="c"># This is not that interesting, but it&#39;s here:</span>
 	<span class="c">#dc = nx.degree_centrality(large_component)</span>

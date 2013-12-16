@@ -49,33 +49,32 @@
           <div class="body">
             
   <h1>Source code for time_line</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;Jennings Anderson 2013</span>
-<span class="sd">CSCI 5352: Final Project: Boulder Flooding</span>
-
-<span class="sd">This module is for visualizing the timeline of the flooding for temporal analysis.&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;This module is for visualizing the timeline of the flooding for temporal analysis.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">bf_load</span> <span class="kn">as</span> <span class="nn">bf</span>
 <span class="kn">import</span> <span class="nn">proj_funcs</span> <span class="kn">as</span> <span class="nn">f</span>
+<span class="kn">import</span> <span class="nn">temporal_analysis</span> <span class="kn">as</span> <span class="nn">t</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="kn">as</span> <span class="nn">nx</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">datetime</span> 
 <span class="kn">import</span> <span class="nn">copy</span>
-												<span class="c"># Syntax for what is returned, true/false</span>
-<span class="n">query</span> <span class="o">=</span> <span class="p">{</span>	<span class="s">&#39;spec&#39;</span><span class="p">:</span>	 <span class="p">{</span> <span class="p">},</span>						<span class="c"># We want all tweets</span>
-			<span class="s">&#39;fields&#39;</span><span class="p">:{</span>	<span class="s">&#39;_id&#39;</span>                   <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>		<span class="c"># This is the Mongo ID </span>
-						<span class="s">&#39;id&#39;</span>                    <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>		<span class="c"># This is a number</span>
-						<span class="s">&#39;user.screen_name&#39;</span>      <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 		<span class="c"># For kicks</span>
-						<span class="s">&#39;user.id&#39;</span>               <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 		<span class="c"># User ID</span>
-						<span class="s">&#39;created_at&#39;</span>			<span class="p">:</span> <span class="mi">1</span><span class="p">}</span> <span class="p">}</span>		<span class="c"># This is a date, may have to adjust zone.</span>
+
+<span class="k">def</span> <span class="nf">get_range</span><span class="p">(</span><span class="n">query</span> <span class="o">=</span> <span class="n">bf</span><span class="o">.</span><span class="n">all_tweets</span><span class="p">):</span>
+	<span class="n">tweets</span> <span class="o">=</span> <span class="n">bf</span><span class="o">.</span><span class="n">query_mongo_get_list</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+	<span class="n">times</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">tweet</span> <span class="ow">in</span> <span class="n">tweets</span><span class="p">:</span>
+		<span class="n">tweet</span><span class="p">[</span><span class="s">&#39;created_at&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span> <span class="c">#Adjusting for TimeZone</span>
+		<span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tweet</span><span class="p">[</span><span class="s">&#39;created_at&#39;</span><span class="p">])</span>
+	<span class="n">times</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">times</span>
 
 <div class="viewcode-block" id="get_data_list"><a class="viewcode-back" href="../code.html#time_line.get_data_list">[docs]</a><span class="k">def</span> <span class="nf">get_data_list</span><span class="p">(</span><span class="n">time_step</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">just_count</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
 	<span class="sd">&#39;&#39;&#39;Returns dictionary:</span>
 <span class="sd">		Keys: Time Steps</span>
 <span class="sd">		Values: #Tweets in TimeStep&#39;&#39;&#39;</span>
-	<span class="n">tweets</span> <span class="o">=</span> <span class="n">bf</span><span class="o">.</span><span class="n">query_mongo_get_list</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
-
+	<span class="n">tweets</span> <span class="o">=</span> <span class="n">bf</span><span class="o">.</span><span class="n">query_mongo_get_list</span><span class="p">(</span><span class="n">bf</span><span class="o">.</span><span class="n">all_tweets</span><span class="p">)</span>
 	<span class="n">flood_days</span> <span class="o">=</span> <span class="p">{}</span>
-	
 	<span class="k">for</span> <span class="n">tweet</span> <span class="ow">in</span> <span class="n">tweets</span><span class="p">:</span>
 		<span class="n">tweet</span><span class="p">[</span><span class="s">&#39;created_at&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span> <span class="c">#Adjusting for TimeZone</span>
 		<span class="n">this_hour</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">roundTime</span><span class="p">(</span><span class="n">tweet</span><span class="p">[</span><span class="s">&#39;created_at&#39;</span><span class="p">],</span><span class="n">roundTo</span><span class="o">=</span><span class="n">time_step</span><span class="p">)</span>
@@ -90,8 +89,10 @@
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">return</span> <span class="n">flood_days</span>
 </div>
-<div class="viewcode-block" id="make_plot_return_top"><a class="viewcode-back" href="../code.html#time_line.make_plot_return_top">[docs]</a><span class="k">def</span> <span class="nf">make_plot_return_top</span><span class="p">(</span><span class="n">time_steps</span><span class="p">,</span> <span class="n">time_step</span><span class="o">=</span><span class="s">&#39;Day&#39;</span><span class="p">,</span> <span class="n">make_plot</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-	<span class="sd">&#39;&#39;&#39;Create plot from time_steps dictionary&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="make_plot_return_top"><a class="viewcode-back" href="../code.html#time_line.make_plot_return_top">[docs]</a><span class="k">def</span> <span class="nf">make_plot_return_top</span><span class="p">(</span><span class="n">time_steps</span><span class="p">,</span> <span class="n">make_plot</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Create plot from time_steps dictionary</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">to_graph</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="n">sorted_keys</span> <span class="o">=</span> <span class="n">time_steps</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 	<span class="n">sorted_keys</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
@@ -100,12 +101,15 @@
 		<span class="n">to_graph</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time_steps</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
 
 	<span class="k">if</span> <span class="n">make_plot</span><span class="p">:</span>
-		<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sorted_keys</span><span class="p">,</span> <span class="n">to_graph</span><span class="p">)</span>
+		<span class="n">recips</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">reciprocity_per_time_step</span><span class="p">(</span><span class="n">time_step</span><span class="o">=</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sorted_keys</span><span class="p">,</span> <span class="n">to_graph</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Tweets&quot;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sorted_keys</span><span class="p">,</span> <span class="n">recips</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;Reciprocity&quot;</span><span class="p">)</span>
 		<span class="n">locs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">()</span>
-		<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Twitter Activity by &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time_step</span><span class="p">))</span> <span class="c">#Modify this to apply</span>
-		<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&#39;Tweets per &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time_step</span><span class="p">))</span>		 <span class="c">#Modify this to apply</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Twitter Activity by Hour&#39;</span><span class="p">)</span> <span class="c">#Modify this to apply</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&#39;Tweets per Hour&#39;</span><span class="p">)</span>		 <span class="c">#Modify this to apply</span>
 		<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">time_step</span><span class="p">))</span>
 		<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s">&quot;Best&quot;</span><span class="p">)</span>
 		<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 	<span class="n">to_graph_original</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">to_graph</span><span class="p">)</span>
@@ -118,45 +122,13 @@
 	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">to_graph</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">limit</span><span class="p">]:</span>
 		<span class="n">top_times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sorted_keys</span><span class="p">[</span><span class="n">to_graph_original</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">i</span><span class="p">)])</span>
 		<span class="n">top_dict</span><span class="p">[</span><span class="n">top_times</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">top_times</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span>
-		<span class="c">#print top_times[len(top_times)-1], i</span>
 
 	<span class="k">return</span> <span class="n">top_dict</span>
 
 </div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-
-	<span class="n">minutes</span> <span class="o">=</span> <span class="n">get_data_list</span><span class="p">(</span><span class="n">time_step</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">just_count</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-
-	<span class="c">#for i in minutes.keys()[0:10]:</span>
-	<span class="c">#	print i, len(minutes[i])</span>
-
-	<span class="nb">dict</span> <span class="o">=</span> <span class="n">make_plot_return_top</span><span class="p">(</span><span class="n">minutes</span><span class="p">,</span> <span class="n">make_plot</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
-
-	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]:</span>
-		<span class="k">print</span> <span class="n">i</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-	<span class="n">vals</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-	<span class="n">vals</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-	<span class="n">vals</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
-	<span class="k">print</span> <span class="n">vals</span> 			<span class="c">#Top minutes with these tweets.</span>
-
-	<span class="c">#test_hours = get_data_list(time_step=60*60)</span>
-	<span class="c">#vals = test_hours.values()</span>
-	<span class="c">#vals.sort()</span>
-	<span class="c">#vals.reverse()</span>
-	<span class="c">#print vals</span>
-	
-	<span class="c">#top_ten = make_plot(hours, &#39;Hour&#39;)</span>
-
-	<span class="c">#for i in top_ten:</span>
-	<span class="c">#	print type(i), i</span>
-	<span class="c">#print len(top_ten)</span>
-
-
-
-<span class="c"># Leads from this Graph: Look at the Twitter activity that happened in the hour with the highest</span>
-<span class="c"># activity</span>
-
-<span class="c"># The hours with the most activity:</span>
+	<span class="n">hours</span> <span class="o">=</span> <span class="n">get_data_list</span><span class="p">(</span><span class="n">time_step</span><span class="o">=</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="p">,</span> <span class="n">just_count</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+	<span class="nb">dict</span> <span class="o">=</span> <span class="n">make_plot_return_top</span><span class="p">(</span><span class="n">hours</span><span class="p">,</span> <span class="n">make_plot</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 </pre></div>
 
           </div>

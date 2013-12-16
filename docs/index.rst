@@ -1,4 +1,4 @@
-sPython Documentation for CO Flood Twitter Network Analysis
+Python Documentation for CO Flood Twitter Network Analysis
 ==========================================================
 
 This is documentation for the code I wrote to analyze the Colorado Flood Twitter data for a final project.

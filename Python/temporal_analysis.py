@@ -36,6 +36,7 @@ def hashtag_changes(time_step = 60*60*24):
 		title="Cumulative Connected Components")
 
 def reciprocity_per_time_step(time_step=60*60):
+	"""Plots the reciprocity of all tweets in the UMG for a given time slice."""
 	ranges = t.get_range()
 	first_tweet = ranges[0]
 	last_tweet  = ranges[(len(ranges)-1)]
