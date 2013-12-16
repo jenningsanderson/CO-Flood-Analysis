@@ -1,7 +1,4 @@
-"""Jennings Anderson 2013
-CSCI 5352: Final Project: Boulder Flooding
-
-This module builds hashtag networks based on retweet frequency.
+"""This module builds hashtag networks based on retweet frequency.
 Hashtags are nodes and edges exist between them if they appear in the same tweet.
 This is similar to a word cloud, but shows relation between tweets.
 
@@ -11,22 +8,9 @@ import bf_load as bf
 import proj_funcs as f
 import networkx as nx
 import matplotlib.pyplot as plt
-import re
-
-
-##################################################################################
-####					RELEVANT QUERIES FOR DATASET HERE 
-##################################################################################
-
-query = {	'spec':	{'text': re.compile('(RT|MT)', re.IGNORECASE) },#, 'geo': {'$ne': None }},	#Only Geolocated tweets #For now.
-			'fields':{	'_id':0, 'id':1, 'user.screen_name': 1, 'text':1,
-						'user.id':1, 'entities.hashtags':1}
-		}
-
-##################################################################################
 
 def retweeted_graph(tweets_array):
-	"""Returns graph from tweets array returned from mongoDB"""
+	"""Returns retweeted graph from tweets array returned from mongoDB"""
 	g = nx.Graph()
 	counter = 0
 	for tweet in tweets_array:
@@ -39,9 +23,9 @@ def retweeted_graph(tweets_array):
 	 		if not g.has_node(tag):
 	 			g.add_node(tag, {'weight':0})
 	 		else:
-	 			g.node[tag]['weight'] += 1    #The weight is the number of times tag occurs
-	 	
-	 	# Now loop through entities again and grab all pairs of hashtags.
+	 			g.node[tag]['weight'] += 1  # Weight is # times hashtag occurs
+
+		# Now loop through entities again and grab all pairs of hashtags.
 	 	for hashtag1 in tweet['entities']['hashtags']:
 	 		tag1 = hashtag1['text'].encode('ascii', 'ignore').lower()
 	 		for hashtag2 in tweet['entities']['hashtags']:
@@ -66,9 +50,10 @@ def retweeted_graph(tweets_array):
 
 def make_triangle_cc_plot(graph, threshold=100, show_labels=False):
 	"""Create a Plot of #Triangles vs. Clustering Coefficient for each node.
-	Options: 
-		Threshold defines maximum # triangles per node to be included in plot.
-		show_labels (defaults to false) tells matplotlib to show labels or not"""
+	
+	|  Function Options: 
+	|  Threshold: Maximum # triangles per node to be included in plot.
+	|  show_labels (defaults to false): Tells Matplotlib to show labels or not"""
 	tris =  nx.triangles(graph)
 	clustering = nx.clustering(graph, weight='weight')
 	cc_to_graph = []
@@ -90,33 +75,40 @@ def make_triangle_cc_plot(graph, threshold=100, show_labels=False):
 	
 	if show_labels:
 		for i, txt in enumerate(labels):
-			if len(txt) %2==0:
-				ax.annotate(txt, (cc_to_graph[i], tris_to_graph[i]), rotation=20)
+			ax.annotate(txt, (cc_to_graph[i], tris_to_graph[i]), rotation=5)
+
+	plt.plot([-1,1],[0,0],'k-')  # Put some Axis on the graph
+	plt.plot([0,0],[0,1000], 'k-') 
+
+	#plt.plot([-.01,1],[],'r-')
 
 	plt.title('Number of Triangles vs. Clustering Coefficient')
  	plt.ylabel("Triangles")
  	plt.xlabel("Clustering Coefficient")
+ 	plt.xlim([0,.06])
+ 	plt.ylim([0,60])
 	
 	return plt
 
 ############################## RUNTIME #######################################
 if __name__ == '__main__':
-
-	retweets = bf.query_mongo_get_list(query)		# Get retweets list
-
+	# Get all retweets
+	retweets = bf.query_mongo_get_list(bf.retweets)
 	print "Number of Retweets: ", len(retweets)		
+	retweets_graph = retweeted_graph(retweets)
+	print "Nodes: ", len(retweets_graph.nodes()), "Edges: ", len(retweets_graph.edges())
+	
+	# Trim nodes to greater than 500
+	trimmed_retweets = f.trim_graph(retweets_graph,'weight', 500)
+	print "Trimmed to 500:",len(trimmed_retweets.nodes())
+	#f.write_network_gml(trimmed_retweets,'retweeted_hashtags_gt_500')
+	
+	# Triangles Vs. Clustering Coefficient
+	make_triangle_cc_plot(trimmed_retweets, show_labels=True, threshold=60).show()
 
-	retweets_graph = retweeted_graph(retweets)		# Make graph
-
-	pruned_graph = retweets_graph.copy()			# Prune graph to hashtags > 700
-	for node in pruned_graph.nodes():
-		if pruned_graph.node[node]['weight'] < 800:
-			pruned_graph.remove_node(node)
-
-	f.print_betweenness_centrality(pruned_graph)
-
-	make_triangle_cc_plot(pruned_graph, show_labels=True, threshold=300).show()
-
-	#f.write_network_gml(pruned_graph, 'retweets_hashtag_gt800_real_degree')
+	# Centralities:
+	#f.print_betweenness_centrality(trimmed_retweets)
+	
+	# f.write_network_gml(pruned_graph, 'retweets_hashtag_gt800_real_degree')
 
 	#f.draw_network_plt(pruned_graph, scale=(.1))	#For quick visualization
