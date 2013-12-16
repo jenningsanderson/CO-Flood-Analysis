@@ -127,7 +127,7 @@ def roundTime(dt=None, roundTo=60):
    roundTo : Closest number of seconds to round to, default 1 minute.
    Author: Thierry Husson 2012 - Use it as you want but don't blame me.
    Source: http://stackoverflow.com/questions/3463930/how-to-round-the-
-   		   minute-of-a-datetime-object-python/10854034#10854034"""
+   minute-of-a-datetime-object-python/10854034#10854034"""
    if dt == None : dt = datetime.datetime.now()
    seconds = (dt - dt.min).seconds
    # // is a floor division, not a comment on following line:

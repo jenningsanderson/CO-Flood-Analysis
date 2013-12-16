@@ -36,13 +36,6 @@ Retweeted Hashtags
 .. automodule:: retweet_hashtags
    :members:
 
-Follower Assortativity
-======================
-**follower_assortativity.py**
-
-.. automodule:: follower_assortativity
-   :members:
-
 Temporal Analysis
 =================
 **temporal_analysis.py**

@@ -54,13 +54,80 @@
 
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="kn">as</span> <span class="nn">nx</span>
 <span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">MongoClient</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
 
 <span class="c">###################  MAIN TWEET FILE -- EACH LINE IS A JSON OBJECT     ################</span>
 <span class="nb">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;../../../../Documents/Boulder_Floods/boulder_floods.json&#39;</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span>
 <span class="n">db</span> <span class="o">=</span> <span class="n">MongoClient</span><span class="p">()</span><span class="o">.</span><span class="n">mydb</span><span class="o">.</span><span class="n">tweets</span>	<span class="c">#Main Collection</span>
+<span class="c">#######################################################################################</span>
+<span class="c">###########################        RELEVANT QUERIES       #############################</span>
+<span class="n">all_tweets</span> <span class="o">=</span> <span class="p">{</span>  <span class="s">&#39;spec&#39;</span><span class="p">:</span>	 <span class="p">{},</span>                            <span class="c"># All Tweets, no filters</span>
+				<span class="s">&#39;fields&#39;</span><span class="p">:{</span>	
+					<span class="s">&#39;_id&#39;</span>                   <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>        <span class="c"># This is the Mongo ID </span>
+					<span class="s">&#39;id&#39;</span>                    <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>        <span class="c"># This is a number</span>
+					<span class="s">&#39;user.screen_name&#39;</span>      <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>        <span class="c"># For the label</span>
+					<span class="s">&#39;user.id&#39;</span>               <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>        <span class="c"># User ID (node ID)</span>
+					<span class="s">&#39;created_at&#39;</span>			<span class="p">:</span> <span class="mi">1</span><span class="p">,</span>        <span class="c"># Date Object</span>
+					<span class="s">&#39;entities&#39;</span>				<span class="p">:</span> <span class="mi">1</span><span class="p">}</span> <span class="p">}</span>      <span class="c"># For User Mentions/Hashtags</span>
+
+<span class="n">only_geo_tagged</span> <span class="o">=</span> <span class="p">{</span>	<span class="s">&#39;spec&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;geo&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;$ne&#39;</span><span class="p">:</span> <span class="bp">None</span> <span class="p">}},</span>	<span class="c">#Only geolocated tweets?</span>
+					<span class="s">&#39;fields&#39;</span><span class="p">:{</span>	<span class="s">&#39;_id&#39;</span>			<span class="p">:</span>   <span class="mi">0</span><span class="p">,</span> 
+								<span class="s">&#39;id&#39;</span>			<span class="p">:</span>   <span class="mi">1</span><span class="p">,</span> 
+								<span class="s">&#39;user.screen_name&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+								<span class="s">&#39;text&#39;</span>			<span class="p">:</span>   <span class="mi">1</span><span class="p">,</span>
+								<span class="s">&#39;user.id&#39;</span>		<span class="p">:</span>   <span class="mi">1</span><span class="p">,</span> 
+								<span class="s">&#39;entities&#39;</span>      <span class="p">:</span>   <span class="mi">1</span><span class="p">}</span> <span class="p">}</span>
+
+<span class="n">retweets</span> <span class="o">=</span> <span class="p">{</span>    <span class="s">&#39;spec&#39;</span><span class="p">:</span>	<span class="p">{</span><span class="s">&#39;text&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;(RT|MT)&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span> <span class="p">},</span>
+				<span class="s">&#39;fields&#39;</span><span class="p">:{</span>
+					<span class="s">&#39;_id&#39;</span>                   <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+					<span class="s">&#39;id&#39;</span>                    <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+					<span class="s">&#39;user.screen_name&#39;</span>      <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+					<span class="s">&#39;text&#39;</span>                  <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+					<span class="s">&#39;user.id&#39;</span>               <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+					<span class="s">&#39;entities.hashtags&#39;</span>     <span class="p">:</span> <span class="mi">1</span><span class="p">}</span> <span class="p">}</span>
+
+<span class="n">not_retweets</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;spec&#39;</span><span class="p">:</span>	<span class="p">{</span><span class="s">&#39;text&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;$not&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;(RT|MT)&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span> <span class="p">}</span> <span class="p">},</span>
+				<span class="s">&#39;fields&#39;</span><span class="p">:{</span>
+					<span class="s">&#39;_id&#39;</span>                   <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+					<span class="s">&#39;id&#39;</span>                    <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+					<span class="s">&#39;user.screen_name&#39;</span>      <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+					<span class="s">&#39;text&#39;</span>                  <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+					<span class="s">&#39;user.id&#39;</span>               <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+					<span class="s">&#39;entities&#39;</span>              <span class="p">:</span> <span class="mi">1</span><span class="p">}</span> <span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">get_tweets_between</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+	<span class="n">start</span> <span class="o">+=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span> <span class="c"># Adjusting for timezone</span>
+	<span class="n">end</span> <span class="o">+=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+		<span class="k">print</span> <span class="s">&quot;s:&quot;</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="s">&quot;e:&quot;</span><span class="p">,</span> <span class="n">end</span>
+	<span class="n">time_query</span> <span class="o">=</span> <span class="p">{</span>   <span class="s">&#39;spec&#39;</span>  <span class="p">:{</span><span class="s">&#39;created_at&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;$gt&#39;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span> <span class="s">&#39;$lt&#39;</span><span class="p">:</span> <span class="n">end</span> <span class="p">}</span> <span class="p">},</span>
+					<span class="s">&#39;fields&#39;</span><span class="p">:{</span>	
+						<span class="s">&#39;_id&#39;</span>               <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> 
+						<span class="s">&#39;id&#39;</span>                <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
+						<span class="s">&#39;user.id&#39;</span>           <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
+						<span class="s">&#39;user.screen_name&#39;</span>  <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+						<span class="s">&#39;entities&#39;</span>          <span class="p">:</span> <span class="mi">1</span> <span class="p">}</span>	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">query_mongo_get_list</span><span class="p">(</span><span class="n">time_query</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">get_all_users_who_interact_with</span><span class="p">(</span><span class="n">in_array_users_query</span><span class="p">):</span>
+	<span class="n">all_who_interact_with_list</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s">&#39;spec&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;$or&#39;</span><span class="p">:</span> <span class="p">[</span>
+			<span class="p">{</span><span class="s">&#39;user.id&#39;</span><span class="p">:</span>
+				<span class="p">{</span><span class="s">&#39;$in&#39;</span><span class="p">:</span><span class="n">in_array_users_query</span><span class="p">}},</span> 
+			<span class="p">{</span><span class="s">&#39;entities.user_mentions.id&#39;</span><span class="p">:</span>
+				<span class="p">{</span><span class="s">&#39;$in&#39;</span><span class="p">:</span><span class="n">in_array_users_query</span><span class="p">}}]},</span>
+		<span class="s">&#39;fields&#39;</span><span class="p">:{</span>	<span class="s">&#39;_id&#39;</span>					<span class="p">:</span><span class="mi">0</span><span class="p">,</span> 
+			<span class="s">&#39;id&#39;</span>					<span class="p">:</span><span class="mi">1</span><span class="p">,</span> 
+			<span class="s">&#39;user.screen_name&#39;</span>		<span class="p">:</span><span class="mi">1</span><span class="p">,</span> 
+			<span class="s">&#39;text&#39;</span>					<span class="p">:</span><span class="mi">1</span><span class="p">,</span>
+			<span class="s">&#39;user.id&#39;</span>				<span class="p">:</span><span class="mi">1</span><span class="p">,</span> 
+			<span class="s">&#39;entities.user_mentions&#39;</span><span class="p">:</span><span class="mi">1</span> <span class="p">}}</span>
+	<span class="k">return</span> <span class="n">query_mongo_get_list</span><span class="p">(</span><span class="n">all_who_interact_with_list</span><span class="p">)</span>
 <span class="c">#######################################################################################</span>
 
 <div class="viewcode-block" id="populate_mongoDB"><a class="viewcode-back" href="../code.html#bf_load.populate_mongoDB">[docs]</a><span class="k">def</span> <span class="nf">populate_mongoDB</span><span class="p">():</span>
@@ -68,12 +135,12 @@
 <span class="sd">	Takes special care to convert the created_at field&quot;&quot;&quot;</span>
 	<span class="k">global</span> <span class="nb">file</span><span class="p">,</span> <span class="n">db</span>
 	<span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
-	<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">file</span><span class="p">:</span>				<span class="c"># Standard iteration through file</span>
-		<span class="n">tweet</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> 	<span class="c"># Recognize it as a JSON object</span>
+	<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">file</span><span class="p">:</span>               <span class="c"># Standard iteration through file</span>
+		<span class="n">tweet</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>    <span class="c"># Recognize it as a JSON object</span>
 		<span class="n">tweet</span><span class="p">[</span><span class="s">&#39;created_at&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">tweet</span><span class="p">[</span><span class="s">&#39;created_at&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;+0000&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">),</span>
 			<span class="s">&#39;%a %b </span><span class="si">%d</span><span class="s"> %H:%M:%S %Y&#39;</span><span class="p">)</span>
 		<span class="n">db</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">tweet</span><span class="p">)</span>            <span class="c"># Actually insert it into the tweets collection</span>
-		<span class="k">if</span> <span class="n">counter</span> <span class="o">%</span> <span class="mi">10000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>    <span class="c"># Shows import update status because it can take a while</span>
+		<span class="k">if</span> <span class="n">counter</span> <span class="o">%</span> <span class="mi">10000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>    <span class="c"># Shows import update status - can take a while</span>
 			<span class="k">print</span> <span class="n">counter</span><span class="p">,</span>
 		<span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
 	<span class="k">print</span> <span class="s">&quot;done&quot;</span>
@@ -95,7 +162,7 @@
 		<span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">query</span><span class="p">[</span><span class="s">&#39;spec&#39;</span><span class="p">],</span> <span class="n">fields</span><span class="o">=</span><span class="n">query</span><span class="p">[</span><span class="s">&#39;fields&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">limit</span><span class="p">))</span>
 </div>
 <div class="viewcode-block" id="pickle_this"><a class="viewcode-back" href="../code.html#bf_load.pickle_this">[docs]</a><span class="k">def</span> <span class="nf">pickle_this</span><span class="p">(</span><span class="n">object_to_pickle</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;Pickles the object passed to it with the name passed and writes to pickle directory.</span>
+	<span class="sd">&quot;&quot;&quot;Pickles the object passed to it with the name passed and writes to pickle directory</span>
 
 <span class="sd">	|  Rarely implemented because for most graphs it is quicker to make real-time query.</span>
 <span class="sd">	|  If graph requires making many queries, best to pickle the graph once it is made.</span>
@@ -115,9 +182,9 @@
 	<span class="k">print</span> <span class="s">&quot;done&quot;</span>
 	<span class="k">return</span> <span class="n">this_obj</span>
 </div>
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>					<span class="c"># If this file is called direclty, run import</span>
-	<span class="k">print</span> <span class="s">&quot;Running Import...&quot;</span>
-	<span class="c">#populate_mongoDB()						# ONLY RUN ONCE; COMMENTED OUT FOR SAFETY</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>               <span class="c"># If this file is called direclty, run import</span>
+	<span class="k">print</span> <span class="s">&quot;Called bf_load Module</span><span class="se">\n</span><span class="s">Running Import...&quot;</span>
+	<span class="c">#populate_mongoDB()                  # ONLY RUN ONCE; COMMENTED OUT FOR SAFETY</span>
 	<span class="k">print</span> <span class="s">&quot;done&quot;</span>
 </pre></div>
 

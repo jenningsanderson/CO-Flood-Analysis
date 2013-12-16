@@ -49,43 +49,64 @@
           <div class="body">
             
   <h1>Source code for proj_funcs</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;Jennings Anderson 2013</span>
-<span class="sd">CSCI 5352: Final Project: Boulder Flooding</span>
-
-<span class="sd">This module holds functions used in multiple parts of the analysis project.&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;This module holds various general functions for the project such as creating graphs.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="kn">as</span> <span class="nn">nx</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 
-<div class="viewcode-block" id="draw_graph"><a class="viewcode-back" href="../code.html#proj_funcs.draw_graph">[docs]</a><span class="k">def</span> <span class="nf">draw_graph</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">x_axis</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">y_axis</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">x_scale</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">y_scale</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">y_lim</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;Creates a matploblib graph from a dictionary.  </span>
-<span class="sd">	Takes arguments for titles, axis, and scales&quot;&quot;&quot;</span>
- 	<span class="k">if</span> <span class="ow">not</span> <span class="n">y_axis</span><span class="p">:</span>  <span class="n">y_axis</span> <span class="o">=</span> <span class="s">&#39;Y Axis&#39;</span><span class="p">;</span>
- 	<span class="k">if</span> <span class="ow">not</span> <span class="n">x_axis</span><span class="p">:</span>  <span class="n">x_axis</span> <span class="o">=</span> <span class="s">&#39;X Axis&#39;</span><span class="p">;</span>
- 	<span class="k">if</span> <span class="ow">not</span> <span class="n">title</span><span class="p">:</span>   <span class="n">title</span>  <span class="o">=</span> <span class="s">&#39;Title&#39;</span><span class="p">;</span>
- 	<span class="k">if</span> <span class="ow">not</span> <span class="n">x_scale</span><span class="p">:</span> <span class="n">x_scale</span><span class="o">=</span> <span class="s">&#39;linear&#39;</span><span class="p">;</span>
- 	<span class="k">if</span> <span class="ow">not</span> <span class="n">y_scale</span><span class="p">:</span> <span class="n">y_scale</span><span class="o">=</span> <span class="s">&#39;linear&#39;</span><span class="p">;</span> 
- 	<span class="k">if</span> <span class="ow">not</span> <span class="n">style</span><span class="p">:</span>   <span class="n">style</span>  <span class="o">=</span> <span class="s">&#39;g-&#39;</span><span class="p">;</span>
- 	<span class="k">if</span> <span class="n">scale</span><span class="p">:</span>  <span class="n">y_scale</span><span class="o">=</span><span class="n">scale</span><span class="p">;</span>
- 	<span class="k">if</span> <span class="n">scale</span><span class="p">:</span>  <span class="n">x_scale</span><span class="o">=</span><span class="n">scale</span><span class="p">;</span>
+<span class="k">def</span> <span class="nf">ignore_KeyError</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">dict</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+			<span class="k">return</span> <span class="nb">dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+	<span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">False</span>
 
- 	<span class="n">y_vals</span> <span class="o">=</span> <span class="p">[]</span>
- 	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
- 		<span class="n">y_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+<div class="viewcode-block" id="draw_graph"><a class="viewcode-back" href="../code.html#proj_funcs.draw_graph">[docs]</a><span class="k">def</span> <span class="nf">draw_graph</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Creates a matploblib graph from a dictionary.</span>
 
- 	<span class="k">if</span> <span class="n">sort</span><span class="p">:</span>
- 		<span class="n">y_vals</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
- 	<span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
- 		<span class="n">y_vals</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+<span class="sd">	|  Will sort the dictionary if requested.</span>
+<span class="sd">	|  If name argument is specified, it saves figure instead of showing it.</span>
+<span class="sd">	|  Takes arguments for titles, axis, and scales.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">y_label</span> <span class="o">=</span> <span class="n">ignore_KeyError</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s">&#39;y_label&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s">&#39;Y Axis&#39;</span>
+	<span class="n">x_label</span> <span class="o">=</span> <span class="n">ignore_KeyError</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s">&#39;x_label&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s">&#39;X Axis&#39;</span>
+	<span class="n">title</span>  	<span class="o">=</span> <span class="n">ignore_KeyError</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s">&#39;title&#39;</span><span class="p">)</span>   <span class="ow">or</span> <span class="s">&#39;Title&#39;</span>  <span class="c">#Ruby would be much easer...</span>
+	<span class="n">x_scale</span>	<span class="o">=</span> <span class="n">ignore_KeyError</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s">&#39;x_scale&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s">&#39;linear&#39;</span>
+	<span class="n">y_scale</span>	<span class="o">=</span> <span class="n">ignore_KeyError</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s">&#39;y_scale&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s">&#39;linear&#39;</span>
+	<span class="n">style</span> 	<span class="o">=</span> <span class="n">ignore_KeyError</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s">&#39;style&#39;</span><span class="p">)</span> 	 <span class="ow">or</span> <span class="s">&#39;g-&#39;</span>
+	<span class="n">scale</span> 	<span class="o">=</span> <span class="bp">False</span> <span class="ow">or</span> <span class="n">ignore_KeyError</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s">&#39;scale&#39;</span><span class="p">)</span>
+	<span class="n">y_lim</span> 	<span class="o">=</span> <span class="bp">False</span> <span class="ow">or</span> <span class="n">ignore_KeyError</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s">&#39;y_lim&#39;</span><span class="p">)</span>
+	<span class="n">x_lim</span>   <span class="o">=</span> <span class="bp">False</span> <span class="ow">or</span> <span class="n">ignore_KeyError</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s">&#39;x_lim&#39;</span><span class="p">)</span>
+	<span class="n">name</span> 	<span class="o">=</span> <span class="bp">False</span> <span class="ow">or</span> <span class="n">ignore_KeyError</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">)</span>
+	<span class="n">sort</span> 	<span class="o">=</span> <span class="bp">False</span> <span class="ow">or</span> <span class="n">ignore_KeyError</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s">&#39;sort&#39;</span><span class="p">)</span>
+	<span class="n">reverse</span> <span class="o">=</span> <span class="bp">False</span> <span class="ow">or</span> <span class="n">ignore_KeyError</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s">&#39;reverse&#39;</span><span class="p">)</span>
 
- 	<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_vals</span><span class="p">)),</span> <span class="n">y_vals</span><span class="p">,</span> <span class="n">style</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">scale</span><span class="p">:</span>
+		<span class="n">y_scale</span> <span class="o">=</span> <span class="n">scale</span>
+		<span class="n">x_scale</span> <span class="o">=</span> <span class="n">scale</span>
+
+ 	<span class="k">if</span> <span class="ow">not</span> <span class="n">plot</span><span class="p">:</span>
+ 		<span class="n">y_vals</span> <span class="o">=</span> <span class="n">y</span> <span class="ow">or</span> <span class="nb">dict</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+		<span class="n">x_vals</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">or</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_vals</span><span class="p">))</span>
+ 		<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_vals</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">style</span><span class="p">)</span>
+ 		<span class="k">if</span> <span class="n">sort</span><span class="p">:</span>
+ 			<span class="n">y_vals</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+ 		<span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
+ 			<span class="n">y_vals</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+ 	<span class="k">else</span><span class="p">:</span>
+ 		<span class="n">plt</span> <span class="o">=</span> <span class="n">plot</span>
+ 		<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s">&quot;best&quot;</span><span class="p">)</span>
+ 	
  	<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
  	<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="n">y_scale</span><span class="p">)</span>
  	<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="n">x_scale</span><span class="p">)</span>
- 	<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">y_axis</span><span class="p">)</span>
- 	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">x_axis</span><span class="p">)</span>
+ 	<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">y_label</span><span class="p">)</span>
+ 	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">x_label</span><span class="p">)</span>
  	<span class="k">if</span> <span class="n">y_lim</span><span class="p">:</span>
  		<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">y_lim</span><span class="p">)</span>
+ 	<span class="k">if</span> <span class="n">x_lim</span><span class="p">:</span>
+ 		<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">x_lim</span><span class="p">)</span>
 
  	<span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
  		<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -97,7 +118,7 @@
 	<span class="sd">&quot;&quot;&quot;Converts data to counts for easy histogram-like viewing&quot;&quot;&quot;</span>
 	<span class="n">counts</span> <span class="o">=</span> <span class="p">{}</span>
 	<span class="n">hist</span>   <span class="o">=</span> <span class="p">{}</span>
-	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>					<span class="c">#Typically, keys are nodes; but it works for all...</span>
+	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>			<span class="c">#Typically, keys are nodes; but it works for all...</span>
 		<span class="k">if</span> <span class="nb">type</span> <span class="ow">and</span> <span class="n">type_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">==</span><span class="nb">type</span><span class="p">:</span>
 			<span class="k">if</span> <span class="n">counts</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="nb">dict</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
 				<span class="n">counts</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
@@ -117,29 +138,31 @@
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">return</span> <span class="n">counts</span>
 </div>
-<div class="viewcode-block" id="draw_network_plt"><a class="viewcode-back" href="../code.html#proj_funcs.draw_network_plt">[docs]</a><span class="k">def</span> <span class="nf">draw_network_plt</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<div class="viewcode-block" id="draw_network_plt"><a class="viewcode-back" href="../code.html#proj_funcs.draw_network_plt">[docs]</a><span class="k">def</span> <span class="nf">draw_network_plt</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;Will create a networkx matplotlib graph.</span>
 <span class="sd">	Options: If name is specified, will save with name, otherwise will show plot&quot;&quot;&quot;</span>
-	<span class="n">colors</span>	 		<span class="o">=</span> <span class="bp">False</span>
-	<span class="n">sizes</span>  			<span class="o">=</span> <span class="bp">False</span>
-	<span class="n">scaled_sizes</span> 	<span class="o">=</span> <span class="bp">False</span>
+	<span class="n">colors</span>          <span class="o">=</span> <span class="bp">False</span>
+	<span class="n">scaled_sizes</span>    <span class="o">=</span> <span class="bp">False</span>
+	<span class="n">labels</span>          <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+		<span class="n">labels</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s">&#39;label&#39;</span><span class="p">]</span>
 	<span class="k">if</span> <span class="s">&#39;color&#39;</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 		<span class="n">colors</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">get_node_attributes</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="s">&#39;color&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-	<span class="k">if</span> <span class="s">&#39;weight&#39;</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-		<span class="n">sizes</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">get_node_attributes</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="s">&#39;weight&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-		<span class="n">scaled_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">*</span> <span class="n">scale</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sizes</span><span class="p">]</span> 
+	<span class="k">if</span> <span class="n">size</span><span class="p">:</span>
+		<span class="n">sizes</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">get_node_attributes</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+		<span class="n">scaled_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">*</span> <span class="n">scale</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sizes</span><span class="p">]</span>
 	<span class="k">if</span> <span class="n">colors</span> <span class="ow">and</span> <span class="n">scaled_sizes</span><span class="p">:</span>
-		<span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="n">scaled_sizes</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
+		<span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="n">scaled_sizes</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
 	<span class="k">elif</span> <span class="n">colors</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">scaled_sizes</span><span class="p">:</span>
-		<span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
+		<span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
 	<span class="k">elif</span> <span class="n">scaled_sizes</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">colors</span><span class="p">:</span>
-		<span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="n">scaled_sizes</span><span class="p">)</span>
+		<span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="n">scaled_sizes</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+		<span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
 	<span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
 		<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;../Images/&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;.png&#39;</span><span class="p">)</span> <span class="c"># TODO: Make it save this graph to a directory.</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;../Images/&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;.png&#39;</span><span class="p">)</span>
 	<span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="write_network_gml"><a class="viewcode-back" href="../code.html#proj_funcs.write_network_gml">[docs]</a><span class="k">def</span> <span class="nf">write_network_gml</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
@@ -155,7 +178,7 @@
 <span class="sd">   roundTo : Closest number of seconds to round to, default 1 minute.</span>
 <span class="sd">   Author: Thierry Husson 2012 - Use it as you want but don&#39;t blame me.</span>
 <span class="sd">   Source: http://stackoverflow.com/questions/3463930/how-to-round-the-</span>
-<span class="sd">   		   minute-of-a-datetime-object-python/10854034#10854034&quot;&quot;&quot;</span>
+<span class="sd">   minute-of-a-datetime-object-python/10854034#10854034&quot;&quot;&quot;</span>
    <span class="k">if</span> <span class="n">dt</span> <span class="o">==</span> <span class="bp">None</span> <span class="p">:</span> <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
    <span class="n">seconds</span> <span class="o">=</span> <span class="p">(</span><span class="n">dt</span> <span class="o">-</span> <span class="n">dt</span><span class="o">.</span><span class="n">min</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span>
    <span class="c"># // is a floor division, not a comment on following line:</span>
@@ -213,9 +236,22 @@
 		<span class="n">avg</span><span class="o">+=</span><span class="n">i</span>
 	<span class="k">return</span> <span class="n">avg</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
 </div>
+<span class="k">def</span> <span class="nf">trim_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">criteria</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+	<span class="n">trim_graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">key</span> <span class="ow">and</span> <span class="n">value</span><span class="p">:</span>
+		<span class="n">node_types</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">get_node_attributes</span><span class="p">(</span><span class="n">trim_graph</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">trim_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+		<span class="k">if</span> <span class="n">key</span> <span class="ow">and</span> <span class="n">value</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">node_types</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="ow">is</span> <span class="n">value</span> <span class="ow">and</span> <span class="n">trim_graph</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="n">criteria</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">limit</span><span class="p">:</span>
+				<span class="n">trim_graph</span><span class="o">.</span><span class="n">remove_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+				<span class="c">#print &quot;removed: &quot;, str(node)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">trim_graph</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="n">criteria</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">limit</span><span class="p">:</span>
+				<span class="n">trim_graph</span><span class="o">.</span><span class="n">remove_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">trim_graph</span>
+
 <div class="viewcode-block" id="reciprocity_by_degree"><a class="viewcode-back" href="../code.html#proj_funcs.reciprocity_by_degree">[docs]</a><span class="k">def</span> <span class="nf">reciprocity_by_degree</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">degree_type</span><span class="o">=</span><span class="s">&#39;in&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;Returns reciprocity (specified by in/out degree )</span>
-<span class="sd">		**Need to compare to reciprocity formula in Networks Text.</span>
 <span class="sd">		Formatted for LaTeX table output.&quot;&quot;&quot;</span>
 	<span class="k">if</span> <span class="n">degree_type</span> <span class="ow">is</span> <span class="s">&#39;in&#39;</span><span class="p">:</span>
 		<span class="n">degrees</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">in_degree</span><span class="p">()</span>
@@ -224,8 +260,8 @@
 	<span class="n">avg_reciprocity</span> <span class="o">=</span> <span class="mf">0.0</span>
 	<span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">degrees</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">degrees</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="n">size</span><span class="p">]:</span>
 		<span class="k">print</span> <span class="n">degrees</span><span class="p">[</span><span class="n">w</span><span class="p">],</span> <span class="s">&quot;&amp;&quot;</span><span class="p">,</span>
-		<span class="n">reciprocity</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get_reciprocity_of_node</span><span class="p">(</span><span class="n">umg</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
-		<span class="k">print</span> <span class="n">this_data</span><span class="p">[</span><span class="s">&#39;user&#39;</span><span class="p">][</span><span class="s">&#39;screen_name&#39;</span><span class="p">],</span> <span class="s">&quot;</span><span class="se">\\\\</span><span class="s">&quot;</span><span class="c">#,&quot;&amp;&quot;, &quot;{0:.4f}&quot;.format(reciprocity),&quot;\\\\&quot;</span>
+		<span class="n">reciprocity</span> <span class="o">=</span> <span class="n">get_reciprocity_of_node</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
+		<span class="k">print</span> <span class="n">graph</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">w</span><span class="p">][</span><span class="s">&#39;label&#39;</span><span class="p">],</span><span class="s">&quot;&amp;&quot;</span><span class="p">,</span> <span class="s">&quot;{0:.9f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">reciprocity</span><span class="p">),</span><span class="s">&quot;</span><span class="se">\\\\</span><span class="s">&quot;</span>
 		<span class="n">avg_reciprocity</span><span class="o">+=</span><span class="n">reciprocity</span>
 	<span class="k">print</span> <span class="n">avg_reciprocity</span><span class="o">/</span><span class="n">size</span>
 </div>
@@ -258,23 +294,46 @@
 	<span class="k">if</span> <span class="n">return_graph</span><span class="p">:</span>
 		<span class="k">return</span> <span class="p">[</span><span class="n">out_degree_to_graph</span><span class="p">,</span> <span class="n">recip_to_graph</span><span class="p">,</span> <span class="n">labels</span><span class="p">]</span>
 
+<span class="k">def</span> <span class="nf">print_top_self_loops</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+	<span class="n">self_loop_weights</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">self_loop</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">selfloop_edges</span><span class="p">():</span>
+		<span class="n">weight</span> <span class="o">=</span> <span class="n">graph</span><span class="p">[</span><span class="n">self_loop</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">self_loop</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="s">&#39;weight&#39;</span><span class="p">]</span> <span class="c"># Weight of the self loop</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">self_loop_weights</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">weight</span><span class="p">):</span>
+			<span class="n">self_loop_weights</span><span class="p">[</span><span class="n">weight</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">self_loop</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">self_loop_weights</span><span class="p">[</span><span class="n">weight</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">self_loop</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+	<span class="n">weights_array</span> <span class="o">=</span> <span class="n">self_loop_weights</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+	<span class="n">weights_array</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+	<span class="n">weights_array</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">weights_array</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">size</span><span class="p">]:</span>     <span class="c"># Returns top self-looping edges for mentions</span>
+		<span class="k">print</span> <span class="n">weight</span><span class="p">,</span><span class="s">&quot;&amp;&quot;</span><span class="p">,</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">self_loop_weights</span><span class="p">[</span><span class="n">weight</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+			<span class="n">comma</span><span class="o">=</span><span class="s">&quot;,&quot;</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">comma</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+		<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">self_loop_weights</span><span class="p">[</span><span class="n">weight</span><span class="p">]:</span>
+			<span class="k">print</span> <span class="n">graph</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s">&#39;label&#39;</span><span class="p">],</span> <span class="n">comma</span><span class="p">,</span>
+		<span class="k">print</span> <span class="s">&quot;</span><span class="se">\\\\</span><span class="s">&quot;</span>
+
+<span class="k">def</span> <span class="nf">show_component_histogram</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+	<span class="n">components</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">connected_components</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+	<span class="n">hist_list</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">components</span><span class="p">:</span>
+		<span class="n">hist_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+	<span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+		<span class="k">print</span> <span class="n">hist_list</span>
+	<span class="k">if</span> <span class="n">bins</span><span class="p">:</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">hist_list</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s">&#39;stepfilled&#39;</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">hist_list</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s">&#39;stepfilled&#39;</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Size of Components Histogram - Geo-Tagged&quot;</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;Nodes in Component&quot;</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s">&#39;log&#39;</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;Number of Components&quot;</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-	<span class="n">test_graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
-	<span class="n">test_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">weight</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-	<span class="n">test_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">weight</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-	<span class="n">test_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">weight</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-	<span class="n">test_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">weight</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-	<span class="n">test_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">weight</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-	<span class="n">test_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">weight</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-	<span class="n">test_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">weight</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-
-	<span class="k">print</span> <span class="n">get_graph_reciprocity</span><span class="p">(</span><span class="n">test_graph</span><span class="p">)</span>
-
-	<span class="n">print_top_reciprocated_nodes</span><span class="p">(</span><span class="n">test_graph</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-
-	<span class="c">#nx.draw(test_graph)</span>
-	<span class="c">#plt.show()</span>
+	<span class="k">print</span> <span class="s">&quot;Called Proj_Funcs Directly, Nothing to run.  Call from specific module&quot;</span>
 </pre></div>
 
           </div>
